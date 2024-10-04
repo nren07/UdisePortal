@@ -1,0 +1,175 @@
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col md="8">
+        <c-card-group>
+          <c-card class="p-4">
+            <c-card-body>
+              <form cForm>
+                <h1>Login</h1>
+                <p class="text-medium-emphasis">Sign In to your account</p>
+                <c-input-group class="mb-3 input-group">
+                  <!-- <span cInputGroupText >
+                      <svg cIcon name="cilUser"></svg>
+                    </span> -->
+                  <input autoComplete="username" cFormControl placeholder="Username" />
+                </c-input-group>
+                <c-input-group class="mb-4">
+                  <!-- <span cInputGroupText>
+                      <svg cIcon name="cilLockLocked"></svg>
+                    </span> -->
+                  <input autoComplete="current-password" cFormControl placeholder="Password" type="password" />
+                </c-input-group>
+                <c-row>
+                  <c-col xs="6">
+                    <button cButton class="px-4" color="primary" (click)="login()">
+                      Login
+                    </button>
+                  </c-col>
+                  <c-col class="text-right" xs="6">
+                    <button cButton class="px-0" color="link">
+                      Forgot password?
+                    </button>
+                  </c-col>
+                </c-row>
+              </form>
+            </c-card-body>
+          </c-card>
+          <c-card [ngStyle]="{'width.%': 44}" class="text-white bg-primary py-5">
+            <c-card-body class="text-center">
+              <div>
+                <h2>Sign up</h2>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                  tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <button cButton class="mt-3" color="primary" routerLink="/register">
+                  Register Now!
+                </button>
+              </div>
+            </c-card-body>
+          </c-card>
+        </c-card-group>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>
+
+
+<!-- <div class="wrapper">
+  <div class="container">
+    <button class="headbtn1" id="userbtn">user</button>
+    <button class="headbtn2" id="professorbtn">Professor</button>
+    <button class="headbtn3" id="adminbtn">admin</button>
+    <div class="user-login-form">
+      <h2 class="textual">User Login</h2>
+      <form #userloginform="" >
+        <small class="text-danger"><b></b></small>
+        <div class="form-group">
+          <label for="email">User Email address: <b class="text-danger">*</b></label>
+          <input type="email" class="form-control" placeholder="enter email" name="email" 
+            required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" 
+      >
+        
+        </div>
+
+        <div class="form-group">
+          <label for="pwd" style="margin-top: 5px;">User Password: <b class="text-danger">*</b></label>
+          <input type="password" class="form-control" placeholder="enter password" name="pwd"
+             required #password="" [class.is-invalid]="password && password">
+          <div *ngIf="password && password && password">
+            <small class="text-danger" *ngIf="password.required"><b>required field</b></small>
+          </div>
+          <small style="color: gray; font-size: 10px;">atleast one uppercase, numeric digit, lowercase, special
+            character, length of 6-20</small>
+        </div>
+
+        <div class="checkbox" style="margin-top: 5px;">
+          <small style="color: gray;"><input type="checkbox" name="remember"> Remember me</small>
+          <small style="color: navy; margin-left: 42%; cursor: pointer;">forgot password?</small>
+        </div>
+        <button [disabled]="userloginform" type="submit" class="btn loginbtn">Login</button>
+      </form>
+      <div class="sign-up" style=" text-align: center; margin-top: 10px;">Don't have an Account? <small
+          [routerLink]="['/registration']" style="color: navy; text-align: center; cursor: pointer;"><b>Create
+            One</b></small></div>
+      <hr>
+      <p class="text-center mt-3"><b> or Login with </b></p>
+      <div class="text-center">
+        <i class="fa fa-google  mx-3 fa-2x"></i>
+        <i class="fa fa-linkedin mx-3 fa-2x"></i>
+        <i class="fa fa-twitter  mx-3 fa-2x"></i>
+        <i class="fa fa-windows  mx-3 fa-2x"></i>
+        <i class="fa fa-apple fa-retro mx-3 fa-2x"></i>
+        <i class="fa fa-github  mx-3 fa-2x"></i>
+      </div>
+    </div>
+
+    <div class="professor-login-form">
+      <h2 class="textual">Professor Login</h2>
+      <form #professorloginform="" >
+        <small class="text-danger"><b></b></small>
+        <div class="form-group">
+          <label for="email">Professor Email address: <b class="text-danger">*</b></label>
+          <input type="email" class="form-control" placeholder="enter email" name="professoremail"
+            required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" #professoremail=""
+            [class.is-invalid]="professoremail && professoremail">
+          <div *ngIf="professoremail && professoremail && professoremail">
+            <small class="text-danger" *ngIf="professoremail.required"><b>required field</b></small>
+            <small class="text-danger" *ngIf="professoremail.pattern"><b>Invalid email Id</b></small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pwd" style="margin-top: 5px;">Professor Password: <b class="text-danger">*</b></label>
+          <input type="password" class="form-control" placeholder="enter password" name="pwd" required>
+
+          <small style="color: gray; font-size: 10px;">atleast one uppercase, numeric digit, lowercase, special
+            character, length of 6-20</small>
+        </div>
+
+        <div class="checkbox" style="margin-top: 5px;">
+          <small style="color: gray;"><input type="checkbox" name="remember"> Remember me</small>
+          <small style="color: navy; margin-left: 42%; cursor: pointer;">forgot password?</small>
+        </div>
+        <button [disabled]="professorloginform" type="submit" class="btn loginbtn">Login</button>
+      </form>
+      <div class="sign-up" style=" text-align: center; margin-top: 10px;">Don't have an Account? <small
+          [routerLink]="['/registration']" style="color: navy; text-align: center; cursor: pointer;"><b>Create
+            One</b></small></div>
+      <hr>
+      <p class="text-center mt-3"><b> or Login with </b></p>
+      <div class="text-center">
+        <i class="fa fa-google  mx-3 fa-2x"></i>
+        <i class="fa fa-linkedin mx-3 fa-2x"></i>
+        <i class="fa fa-twitter  mx-3 fa-2x"></i>
+        <i class="fa fa-windows  mx-3 fa-2x"></i>
+        <i class="fa fa-apple fa-retro mx-3 fa-2x"></i>
+        <i class="fa fa-github  mx-3 fa-2x"></i>
+      </div>
+    </div>
+
+    <div class="admin-login-form">
+      <h2 class="textual">Admin Login</h2>
+      <form #adminloginform="">
+        <small class="text-danger"><b></b></small>
+        <div class="form-group">
+          <label for="email"> Admin Email address: <b class="text-danger">*</b></label>
+          <input type="email" class="form-control" placeholder="enter admin email" name="email" required
+            pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" #adminemail="" [class.is-invalid]="adminemail && adminemail">
+
+        </div>
+
+        <div class="form-group">
+          <label for="pwd" style="margin-top: 5px;">Admin Password: <b class="text-danger">*</b></label>
+          <input type="password" class="form-control" placeholder="enter admin password" name="pwd">
+
+          <small style="color: gray; font-size: 10px;">Only the admin knows his correct email address & password</small>
+        </div>
+
+        <small style="color: navy; margin-left: 69%; cursor: pointer;">forgot password?</small>
+        <button [disabled]="adminloginform" type="submit" class="btn loginbtn">Login</button>
+      </form>
+    </div>
+  </div>
+</div> -->
