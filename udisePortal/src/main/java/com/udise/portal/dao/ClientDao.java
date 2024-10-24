@@ -1,5 +1,6 @@
 package com.udise.portal.dao;
 
+import com.udise.portal.entity.AppUser;
 import com.udise.portal.entity.Client;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface ClientDao extends AbstractDao{
     List<Client> findByModuleId(Long moduleId);
 
     List<Client> findByRoleId(Long roleId);
+
+    Client getById(Long id);
 
 }

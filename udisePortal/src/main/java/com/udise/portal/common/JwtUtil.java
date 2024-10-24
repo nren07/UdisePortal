@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "jai-bholenath"; // Replace with a strong key
+    private static final String SECRET_KEY = "jai-bholenath";
 
     public static String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
@@ -28,25 +28,25 @@ public class JwtUtil {
                 .compact();
     }
 
-    public boolean validateToken(String token, String username) {
+    public  boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         System.out.println("line 33 in JwtUtil "+extractedUsername);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    public String extractUsername(String token) {
+    public  String extractUsername(String token) {
         String sub= extractAllClaims(token).getSubject();
         System.out.println(sub);
         return sub;
     }
 
-    private Claims extractAllClaims(String token) {
+    private  Claims extractAllClaims(String token) {
         Claims cls= Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         System.out.println(cls.toString());
         return cls;
     }
 
-    private boolean isTokenExpired(String token) {
+    private  boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 }

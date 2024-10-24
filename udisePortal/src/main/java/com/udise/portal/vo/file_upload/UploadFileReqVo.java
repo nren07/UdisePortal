@@ -15,7 +15,7 @@ public class UploadFileReqVo {
 
     @NotBlank(message = "{uploadFilePostVo.fileName.notBlank}")
     @Size(max = 255 ,message = "{uploadFilePostVo.fileName.size}")
-    private String fileType;
+    private String jobType;
 
     @NotBlank(message = "{uploadFilePostVo.fileUploadPath.notBlank}")
     @Size(max = 500 ,message = "{uploadFilePostVo.fileUploadPath.size}")
@@ -33,13 +33,6 @@ public class UploadFileReqVo {
         this.jobTitle = jobTitle;
     }
 
-    public @NotBlank(message = "{uploadFilePostVo.fileName.notBlank}") @Size(max = 255, message = "{uploadFilePostVo.fileName.size}") String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(@NotBlank(message = "{uploadFilePostVo.fileName.notBlank}") @Size(max = 255, message = "{uploadFilePostVo.fileName.size}") String fileType) {
-        this.fileType = fileType;
-    }
 
     public @NotBlank(message = "{uploadFilePostVo.fileUploadPath.notBlank}") @Size(max = 500, message = "{uploadFilePostVo.fileUploadPath.size}") String getFileUploadPath() {
         return fileUploadPath;
@@ -55,5 +48,13 @@ public class UploadFileReqVo {
 
     public void setFileName(@NotBlank(message = "{uploadFilePostVo.fileName.notBlank}") @Size(max = 255, message = "{uploadFilePostVo.fileName.size}") String fileName) {
         this.fileName = fileName;
+    }
+
+    public @NotBlank(message = "{uploadFilePostVo.fileName.notBlank}") @Size(max = 255, message = "{uploadFilePostVo.fileName.size}") String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(@NotBlank(message = "{uploadFilePostVo.fileName.notBlank}") @Size(max = 255, message = "{uploadFilePostVo.fileName.size}") String jobType) {
+        this.jobType = jobType;
     }
 }

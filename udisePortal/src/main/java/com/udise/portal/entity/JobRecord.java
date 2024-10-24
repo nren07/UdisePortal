@@ -3,6 +3,7 @@ package com.udise.portal.entity;
 import com.udise.portal.enums.JobStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 
@@ -10,19 +11,22 @@ import lombok.NoArgsConstructor;
 @Table(name="job_record_table")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class JobRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = Job.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id", nullable = true)
+    @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
-    private String rollNo;
-    private String firstName;
-    private String middleName;
-    private String lastName;
+    private String studentName;
+    private String className;
+    private String section;
+    private Double studentPen;
+    private Double attendance;
+    private Double percentage;
 
     @Enumerated(EnumType.STRING)
     private JobStatus jobStatus;
@@ -43,36 +47,52 @@ public class JobRecord {
         this.job = job;
     }
 
-    public String getRollNo() {
-        return rollNo;
+    public String getStudentName() {
+        return studentName;
     }
 
-    public void setRollNo(String rollNo) {
-        this.rollNo = rollNo;
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getClassName() {
+        return className;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public String getMiddleName() {
-        return middleName;
+    public String getSection() {
+        return section;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setSection(String section) {
+        this.section = section;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Double getStudentPen() {
+        return studentPen;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setStudentPen(Double studentPen) {
+        this.studentPen = studentPen;
+    }
+
+    public Double getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(Double attendance) {
+        this.attendance = attendance;
+    }
+
+    public Double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Double percentage) {
+        this.percentage = percentage;
     }
 
     public JobStatus getJobStatus() {

@@ -1,7 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.common.JwtUtil;
-import com.udise.portal.service.sign_up.SignUpManager;
+import com.udise.portal.sign_up.SignUpManager;
 
 import com.udise.portal.vo.client.ClientSignUpReqVo;
 import com.udise.portal.vo.client.ClientSignUpResVo;
@@ -22,9 +21,6 @@ public class SignUpController {
 
     @Autowired
     private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @PostMapping("/reg-client")
     public ResponseEntity<ClientSignUpResVo> registerClient(@RequestBody ClientSignUpReqVo obj) throws Exception {

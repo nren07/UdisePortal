@@ -1,14 +1,12 @@
 package com.udise.portal.entity;
 
 import com.udise.portal.enums.ExecutionStatus;
-import com.udise.portal.enums.FileType;
+import com.udise.portal.enums.JobType;
 import com.udise.portal.enums.JobStatus;
-import com.udise.portal.enums.JobTitle;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private FileType fileType;
+    private JobType jobType;
 
     private String fileUploadPath;
 
@@ -29,8 +27,7 @@ public class Job {
 
     private String fileName;
 
-    @Enumerated(EnumType.STRING)
-    private JobTitle jobTitle;
+    private String jobTitle;
 
     @Enumerated(EnumType.STRING)
     private ExecutionStatus executionStatus;
@@ -39,12 +36,8 @@ public class Job {
     private JobStatus jobStatus;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AppUser.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id", nullable = true, referencedColumnName = "id")
-    private List<JobRecord> jobRecords;
 
     public Long getId() {
         return id;
@@ -54,12 +47,12 @@ public class Job {
         this.id = id;
     }
 
-    public FileType getFileType() {
-        return fileType;
+    public JobType getJobType() {
+        return jobType;
     }
 
-    public void setFileType(FileType fileType) {
-        this.fileType = fileType;
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
     }
 
     public String getFileUploadPath() {
@@ -86,11 +79,11 @@ public class Job {
         this.fileName = fileName;
     }
 
-    public JobTitle getJobTitle() {
+    public String getJobTitle() {
         return jobTitle;
     }
 
-    public void setJobTitle(JobTitle jobTitle) {
+    public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
     }
 
@@ -118,11 +111,4 @@ public class Job {
         this.appUser = appUser;
     }
 
-    public List<JobRecord> getJobRecords() {
-        return jobRecords;
-    }
-
-    public void setJobRecords(List<JobRecord> jobRecords) {
-        this.jobRecords = jobRecords;
-    }
 }

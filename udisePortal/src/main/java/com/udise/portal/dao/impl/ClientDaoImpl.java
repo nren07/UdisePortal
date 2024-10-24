@@ -1,5 +1,6 @@
 package com.udise.portal.dao.impl;
 
+import com.udise.portal.entity.AppUser;
 import com.udise.portal.entity.Client;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
@@ -58,5 +59,10 @@ public class ClientDaoImpl extends AbstractDaoImpl implements ClientDao {
     @Override
     public List<Client> findByRoleId(Long roleId) {
         return List.of();
+    }
+
+    @Override
+    public Client getById(Long id) {
+        return getEm().find(Client.class, id);
     }
 }

@@ -21,10 +21,6 @@ public class Client {
     private String email;
     private String password;
     private Role role;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = true, referencedColumnName = "id")
-    private List<AppUser> appUserList;
-
 
     public Long getId() {
         return id;
@@ -44,14 +40,6 @@ public class Client {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public List<AppUser> getAppUserList() {
-        return appUserList;
-    }
-
-    public void setAppUserList(List<AppUser> appUserList) {
-        this.appUserList = appUserList;
     }
 
     public void setId(Long id) {

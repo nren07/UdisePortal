@@ -37,12 +37,8 @@ public class AppUser {
     private Role role;
     private RegistrationStatus registrationStatus;
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = Client.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = true)
+    @JoinColumn(name = "client_id", nullable = false)
     private Client client;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true, referencedColumnName = "id")
-    private List<Job> jobList;
 
     public Long getId() {
         return id;
@@ -112,13 +108,6 @@ public class AppUser {
 
     public void setGender(Gender gender) {
         this.gender = gender;
-    }
-
-    public List<Job> getJobList() {
-        return jobList;
-    }
-    public void setJobList(List<Job> jobList) {
-        this.jobList = jobList;
     }
 
     public RegistrationStatus getRegistrationStatus() {

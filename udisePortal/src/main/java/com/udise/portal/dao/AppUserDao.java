@@ -18,5 +18,7 @@ public interface AppUserDao extends AbstractDao{
 
     AppUser getUserByUserName(String email);
 
+    List<AppUser> getUserList(Long clientId);
+
 
 }

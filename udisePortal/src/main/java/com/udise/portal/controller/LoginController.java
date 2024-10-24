@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.service.login.LoginManager;
+import com.udise.portal.login.LoginManager;
 import com.udise.portal.vo.client.ClientLoginReqVo;
 import com.udise.portal.vo.client.ClientLoginResVo;
 import com.udise.portal.vo.user.UserLoginReqVo;
@@ -28,6 +28,7 @@ public class LoginController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<UserLoginResVo> userLogin(@RequestBody UserLoginReqVo obj) {
+        System.out.println("login request received");
         UserLoginResVo res=loginManager.userLogin(obj);
         System.out.println(res);
         return new ResponseEntity<>(res, HttpStatus.OK);

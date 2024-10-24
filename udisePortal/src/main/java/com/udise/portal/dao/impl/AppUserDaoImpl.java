@@ -1,9 +1,12 @@
 package com.udise.portal.dao.impl;
 import com.udise.portal.dao.AppUserDao;
+import com.udise.portal.dao.ClientDao;
 import com.udise.portal.entity.AppUser;
+import com.udise.portal.entity.Client;
 import jakarta.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,14 +17,22 @@ import java.util.List;
 @Transactional
 public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
 
+    @Autowired
+    private ClientDao clientDao;
+
     private static final Logger log = LoggerFactory.getLogger(AppUserDaoImpl.class);
 
     @Override
     public AppUser findByEmail(String email) {
-        TypedQuery<AppUser> query = getEm().createQuery(
-                "SELECT u FROM AppUser u WHERE u.email = :email", AppUser.class);
-        query.setParameter("email", email);
-        return query.getSingleResult();
+        try{
+            TypedQuery<AppUser> query = getEm().createQuery(
+                    "SELECT u FROM AppUser u WHERE u.email = :email", AppUser.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -72,6 +83,14 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public List<AppUser> getUserList(Long clientId) {
+        TypedQuery<AppUser> query = getEm().createQuery(
+                "SELECT u FROM AppUser u WHERE u.client.id = :clientId", AppUser.class);
+        query.setParameter("clientId", clientId);
+        return query.getResultList();
     }
 
     public List<AppUser> findByRole(String role) {
