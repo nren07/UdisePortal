@@ -129,10 +129,6 @@ public class JobManagerImpl implements JobManager {
             // Navigate to the UDISE portal login page
             driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
             messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
-            WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username-field")));
-            usernameField.sendKeys("08122604246");
-            WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password-field")));
-            passwordField.sendKeys("64sugRS#");
             // Wait until the URL or page state changes after the manual click
             String currentUrl = driver.getCurrentUrl();
 

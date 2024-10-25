@@ -23,7 +23,7 @@ export default function ProjectList() {
   // Fetch project list
   const fetchProjectList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/v1/job/${userId}/getJobs`, {
+      const response = await fetch(`http://103.224.246.103:3001/v1/job/${userId}/getJobs`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

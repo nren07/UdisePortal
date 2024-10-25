@@ -47,7 +47,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const fetchData = async () => {
     try {
-      const url = `http://localhost:8080/v1/job_record/${item.id}/get_job_records`;
+      const url = `http://103.224.246.103:3001/v1/job_record/${item.id}/get_job_records`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -64,7 +64,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const StartJobFetchApi = async () => {
     try {
-      const url = `http://localhost:8080/v1/job/${item.id}/start`;
+      const url = `http://103.224.246.103:3001/v1/job/${item.id}/start`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -383,7 +383,7 @@ export default ProjectTitle;
 
 //   const fetchData = async () => {
 //     try {
-//       const url = `http://localhost:8080/v1/job_record/${item.id}/get_job_records`;
+//       const url = `http://103.224.246.103:3001/v1/job_record/${item.id}/get_job_records`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {
@@ -400,7 +400,7 @@ export default ProjectTitle;
 
 //   const StartJobFetchApi = async () => {
 //     try {
-//       const url = `http://localhost:8080/v1/job/${item.id}/start`;
+//       const url = `http://103.224.246.103:3001/v1/job/${item.id}/start`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {

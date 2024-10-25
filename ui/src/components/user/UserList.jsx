@@ -12,7 +12,7 @@ export default function UserList() {
   const dispatch=useDispatch();
   
   const fetchUserList = async () => {
-      const url=`http://localhost:8080/v1/user/${id}/getUsers`;
+      const url=`http://103.224.246.103:3001/v1/user/${id}/getUsers`;
         try {
           const response = await fetch(
             url,

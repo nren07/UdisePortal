@@ -47,6 +47,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -81,6 +82,13 @@ public class SecurityConfig {
                         .allowedHeaders("*") // Allow all headers
                         .allowCredentials(true); // Allow cookies and credentials
             }
+            @Override
+            public void addViewControllers(ViewControllerRegistry registry) {
+                // Route all non-API requests to index.html
+                registry.addViewController("/{spring:[^\\.]*}")
+                        .setViewName("forward:/index.html");
+            }
+
         };
     }
 }
