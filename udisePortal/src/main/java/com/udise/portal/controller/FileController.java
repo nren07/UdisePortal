@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.file.FileManager;
+import com.udise.portal.service.file.FileManager;
 import com.udise.portal.vo.file_upload.*;
 import com.udise.portal.vo.job.JobResVo;
 import org.springframework.beans.factory.annotation.Autowired;

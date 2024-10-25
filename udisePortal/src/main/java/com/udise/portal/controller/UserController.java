@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.user.UserManager;
+import com.udise.portal.service.user.UserManager;
 import com.udise.portal.vo.user.UserResVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

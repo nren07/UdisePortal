@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.sign_up.SignUpManager;
+import com.udise.portal.service.sign_up.SignUpManager;
 
 import com.udise.portal.vo.client.ClientSignUpReqVo;
 import com.udise.portal.vo.client.ClientSignUpResVo;

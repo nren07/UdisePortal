@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.login.LoginManager;
+import com.udise.portal.service.login.LoginManager;
 import com.udise.portal.vo.client.ClientLoginReqVo;
 import com.udise.portal.vo.client.ClientLoginResVo;
 import com.udise.portal.vo.user.UserLoginReqVo;
