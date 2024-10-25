@@ -1,0 +1,31 @@
+
+.search-box {
+  position: relative;
+}
+.search-box .form-control {
+  padding-left: 80px;
+}
+
+.form-control {
+  position: relative;
+  margin-top: 6px;
+  margin-left: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.search-box .search-icon {
+  font-size: 14px;
+  position: absolute;
+  left: 26px;
+  top: 4px;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #878a99;
+}

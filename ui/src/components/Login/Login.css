@@ -1,0 +1,63 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  background: linear-gradient(-45deg, #6691e7 50%, #13c56d);
+  
+  align-items: center;
+  justify-content: center;
+  /* width: 100vw; */
+  width: 100%;
+  max-width: 100%; 
+}
+.auth-bg-cover {
+  
+  align-items: center;
+  justify-content: center;
+
+  height: 100vh;
+}
+
+.auth-page-wrapper .auth-page-content {
+  
+  position: relative;
+  padding-bottom: 60px !important;
+  z-index: 2;
+  width: 100% !important;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-one-bg {
+  position: relative;
+  background-image: url("https://lms.propdoors.com/auth-one-bg.9284af3a86f94b07.jpg");
+  background-position: center;
+  background-size: cover;
+  z-index: 1;
+  inset: 0;
+}
+.card {
+  margin:40px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px #38414a26;
+}
+
+.auth-one-bg .bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: linear-gradient(to right, #4c7ee3, #6691e7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  opacity: 0.9;
+}

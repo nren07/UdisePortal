@@ -1,0 +1,46 @@
+.col-md-4 {
+  padding: 0;
+}
+
+.card-body h6 {
+  text-decoration: none !important ;
+}
+
+.ribbon-box.ribbon-fill {
+  overflow: hidden;
+}
+.ribbon-box.ribbon-fill.ribbon-sm .ribbon {
+  padding: 2px 16px;
+  width: 78px;
+  height: 42px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.ribbon-box.ribbon-fill .ribbon {
+  transform: rotate(-45deg);
+  width: 93px;
+  height: 52px;
+  margin-left: -36px;
+  margin-top: -16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.ribbon-box .ribbon-info {
+  background: #50c3e6;
+}
+.badge-soft-success {
+  color: #13c56b;
+  background-color: #13c56b1a;
+}
+
+.text-muted {
+  --vz-text-opacity: 1;
+  color: #878a99 !important;
+}
+.card-body {
+  flex: 1 1 auto;
+  padding: var(--vz-card-spacer-y) var(--vz-card-spacer-x);
+  color: var(--vz-card-color);
+}

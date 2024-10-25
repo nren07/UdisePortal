@@ -1,0 +1,55 @@
+.bg-soft-project {
+  background-color: #673ab7;
+  color: white;
+  max-width: 100%;
+}
+.text-white {
+  color: white;
+  text-decoration: none;
+}
+
+/* .avatar-title {
+  align-items: center;
+  background-color: #6691e7;
+  color: #fff;
+  display: flex;
+  font-weight: 400;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+} */
+.favourite-btn.active .ri-star-fill {
+  color: #e8bc52;
+}
+
+.text-muted {
+  color: #878a99 !important;
+}
+
+.badge-soft-warning {
+  color: #e8bc52;
+  background-color: #e8bc521a;
+}
+
+
+
+
+ .avatar-title {
+  align-items: center;
+  background-color: #6691e7;
+  color: #cf57a1;
+  display: flex;
+  font-weight: bold;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+.eye{
+  font-size: 16px;
+  margin: 5px;
+  cursor: pointer;
+}
+.color-icon{
+  color: #d7489b;
+  font-size: larger;
+}

@@ -1,0 +1,28 @@
+.chart-container {
+  width: 400px;
+  height: 400px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.custom-legend {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 10px; /* Space between items */
+  margin-top: 20px; /* Space above the legend */
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.legend-color {
+  /* width: 15px;
+  height: 15px; */
+  margin-right: 5px;
+  /* border-radius: 50%; */
+  display: inline-block;
+}
