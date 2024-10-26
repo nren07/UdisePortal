@@ -33,7 +33,7 @@ function Upload() {
         formData.append("jobTitle", submitData.jobTitle);
 
         try {
-          const response = await fetch(`http://103.224.246.103:3001/v1/fileupload/${userId}/upload`, {
+          const response = await fetch(`http://udise.pytosoft.com:3001/v1/fileupload/${userId}/upload`, {
             method: "POST",
             body: formData,
             headers: { Authorization: `Bearer ${token}` },

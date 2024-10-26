@@ -12,7 +12,7 @@ import java.time.Duration;
 
 @Configuration
 public class DockerConfig {
-    @Value("${docker.host:tcp://localhost:2375}")
+    @Value("${docker.host}")
     private String dockerHost;
 
     @Bean
