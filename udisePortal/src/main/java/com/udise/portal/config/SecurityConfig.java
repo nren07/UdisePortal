@@ -80,7 +80,7 @@ public class SecurityConfig {
                         .allowedOrigins("*") // Allow requests from your frontend during development
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Specify allowed methods
                         .allowedHeaders("*") // Allow all headers
-                        .allowCredentials(true); // Allow cookies and credentials
+                        .allowCredentials(false); // Allow cookies and credentials
             }
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
