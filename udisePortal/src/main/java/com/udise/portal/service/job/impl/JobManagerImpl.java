@@ -104,8 +104,9 @@ public class JobManagerImpl implements JobManager {
     @Async
     public void startChrome(DockerVo dockerVo, Long jobId,String containerId,List<JobRecord>jobRecordList) throws InterruptedException {
 //        log.info("in start chrome function call");
-        String url = String.format("http://",dockerVo.getContainerName(),":%d/wd/hub", dockerVo.getHostPort());
-        String checkUrlStatus=String.format("http://",dockerVo.getContainerName(),":%d/", dockerVo.getHostPort());
+        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), dockerVo.getHostPort());
+        String checkUrlStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), dockerVo.getHostPort());
+
         dockerManager.waitForContainerReady(checkUrlStatus);
         WebDriver driver = null; // Declare driver here
         Job job=jobDao.getById(Job.class,jobId);
