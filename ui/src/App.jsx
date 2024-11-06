@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import { WebSocketProvider } from "./components/context/WebSocketProvider.jsx";
+import VncViewer from "./components/project/VncViewer.jsx";
 
 // Lazy load components
 const Dashboard = lazy(() => import("./Pages/Dashboard"));
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="/CreateLeads" element={<CreateLeads />} />
           <Route path="/ClientAdd" element={<ClientAdd />} />
           <Route path="/ProjectTitle/:id" element={<ProjectTitle />} />
+          <Route path="/vnc" element={<VncViewer/>} />
         </Routes>
       </Suspense>
       {location.pathname !== "/" && <Footer />}

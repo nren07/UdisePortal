@@ -75,7 +75,7 @@ function Login() {
 
   const initializeWebSocket = (userId) => {
     const socket = Stomp.over(function(){
-      return new WebSocket('ws://localhost:8080/ws')
+      return new WebSocket('ws://13.233.228.245/ws')
     });
     const stompClient = Stomp.over(socket);
 
@@ -98,7 +98,7 @@ function Login() {
       if (Object.keys(formErrors).length === 0 && isSubmit) {
         setLoading(true);
         try {
-          const response = await fetch("http://udise.pytosoft.com:3001/v1/login/user", {
+          const response = await fetch("http://13.233.228.245/v1/login/user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formValues),
