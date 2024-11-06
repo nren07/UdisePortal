@@ -98,7 +98,7 @@ function Login() {
       if (Object.keys(formErrors).length === 0 && isSubmit) {
         setLoading(true);
         try {
-          const response = await fetch("https://localhost:8080/v1/login/user", {
+          const response = await fetch("https://udise.pytosoft.com/v1/login/user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formValues),

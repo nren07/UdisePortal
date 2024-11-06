@@ -12,7 +12,7 @@ export default function UserList() {
   const dispatch=useDispatch();
   
   const fetchUserList = async () => {
-      const url=`https://localhost:8080/v1/user/${id}/getUsers`;
+      const url=`https://udise.pytosoft.com/v1/user/${id}/getUsers`;
         try {
           const response = await fetch(
             url,
