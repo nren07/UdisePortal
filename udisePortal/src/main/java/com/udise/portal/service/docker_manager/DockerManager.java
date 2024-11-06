@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public interface DockerManager {
     public DockerVo createAndStartContainer(Long jobId) throws IOException, InterruptedException;
-    public void stopAndRemoveContainer(String containerId);
+    public void stopAndRemoveContainer(String containerId,DockerVo obj);
 
-    public void waitForContainerReady(String url) throws InterruptedException;
+    public void waitForContainerReady(String url) throws InterruptedException, IOException;
 }

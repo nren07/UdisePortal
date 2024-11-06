@@ -9,6 +9,15 @@ public class FileReqVo {
     private JobType jobType;
     private String jobTitle;
 
+    public FileReqVo(MultipartFile file, JobType jobType, String jobTitle) {
+        this.file = file;
+        this.jobType = jobType;
+        this.jobTitle = jobTitle;
+    }
+
+    public FileReqVo() {
+    }
+
     // Getters and setters
     public MultipartFile getFile() {
         return file;

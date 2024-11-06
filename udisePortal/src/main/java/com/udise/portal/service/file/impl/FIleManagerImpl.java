@@ -6,11 +6,15 @@ import com.udise.portal.entity.AppUser;
 import com.udise.portal.entity.Job;
 import com.udise.portal.enums.ExecutionStatus;
 import com.udise.portal.enums.JobStatus;
+import com.udise.portal.enums.JobType;
 import com.udise.portal.service.aws.impl.AWSFileManagerImpl;
 import com.udise.portal.service.file.FileManager;
 import com.udise.portal.service.job.JobRecordManager;
 import com.udise.portal.vo.file_upload.FileReqVo;
 import com.udise.portal.vo.job.JobResVo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
@@ -23,6 +27,7 @@ import java.util.Date;
 @Service
 public class FIleManagerImpl extends AWSFileManagerImpl implements FileManager {
 
+    private static final Logger log = LogManager.getLogger(FIleManagerImpl.class);
     @Autowired
     private AppUserDao appUserDao;
 
@@ -42,14 +47,17 @@ public class FIleManagerImpl extends AWSFileManagerImpl implements FileManager {
         if(user==null) {
             throw new UsernameNotFoundException("User not found");
         }
+        Job job=new Job();
+        BeanUtils.copyProperties(req,job);
         MultipartFile file=req.getFile();
         String fileName = file.getOriginalFilename();
 //        String filePath=uploadFile(file,FILE_PATH_CIRCULAR_DOC);
-        Job job=new Job();
+
         job.setAppUser(user);
         job.setJobTitle(req.getJobTitle());
         job.setExecutionStatus(ExecutionStatus.FILE_UPLOADED);
         job.setJobStatus(JobStatus.PENDING);
+        log.info(req.getJobType());
         job.setFileName(fileName);
 //        job.setFileUploadPath(filePath);
         job.setUploadedOn(new Date());

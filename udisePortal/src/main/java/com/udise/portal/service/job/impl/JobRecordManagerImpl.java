@@ -36,21 +36,17 @@ public class JobRecordManagerImpl implements JobRecordManager {
     @Async
     public void createTask(Job job, MultipartFile file) {
             try{
-//                FileInputStream fis = new FileInputStream(file);
                 InputStream fis = file.getInputStream();
                 Workbook workbook = new XSSFWorkbook(fis);
                 Sheet sheet = workbook.getSheetAt(0);
                 Iterator<Row> rows = sheet.iterator();
-
                 Map<String, Integer> headerMap = new HashMap<>();
-
                 if (rows.hasNext()) {
                     Row headerRow = rows.next();
                     for (Cell cell : headerRow) {
                         headerMap.put(cell.getStringCellValue().toLowerCase(), cell.getColumnIndex());
                     }
                 }
-
                 while (rows.hasNext()) {
                     Row currentRow = rows.next();
                     JobRecord record = new JobRecord();

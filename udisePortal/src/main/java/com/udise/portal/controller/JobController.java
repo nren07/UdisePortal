@@ -29,7 +29,11 @@ public class JobController {
 
     @RequestMapping(value = "/{jobId}/start", method = RequestMethod.GET)
     public ResponseEntity<JobStartResponseVo> startJob(@PathVariable Long jobId) throws IOException, InterruptedException {
-        JobStartResponseVo res = jobManager.startJob(jobId);
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        try{
+            JobStartResponseVo res = jobManager.startJob(jobId);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
     }
 }
