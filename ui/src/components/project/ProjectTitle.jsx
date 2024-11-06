@@ -333,7 +333,7 @@ function ProjectTitle() {
               &times;
             </button>
             <iframe
-              src={`https://udise.pytosoft.com:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
+              src={`http://13.233.228.245:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
               // src={`https://udise.pytosoft.com/vnc`}
               style={styles.iframe}
               title="Job Iframe"
