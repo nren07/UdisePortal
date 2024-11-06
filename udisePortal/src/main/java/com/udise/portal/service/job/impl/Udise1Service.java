@@ -79,10 +79,10 @@ public class Udise1Service {
     @Async
     public void startChrome(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList,Job job) throws InterruptedException, IOException {
 //        log.info("in start chrome function call");
-//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
-//        String checkUrlStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
-        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
-        String checkUrlStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
+        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+        String checkUrlStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
+//        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
+//        String checkUrlStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
         try{
             dockerManager.waitForContainerReady(checkUrlStatus);
             WebDriver driver = null; // Declare driver her
