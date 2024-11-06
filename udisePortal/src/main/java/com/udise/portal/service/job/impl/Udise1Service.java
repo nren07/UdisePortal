@@ -58,8 +58,7 @@ public class Udise1Service {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public JobStartResponseVo
-    startJob(Long jobId,Job job) throws IOException, InterruptedException {
+    public JobStartResponseVo startJob(Long jobId,Job job) throws IOException, InterruptedException {
         List<JobRecord>jobRecordList=jobRecordManager.getJobRecord(jobId);
         if(jobRecordList.size()>0){
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
