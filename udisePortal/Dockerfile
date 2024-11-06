@@ -1,17 +1,17 @@
-# Use a Maven image that includes OpenJDK
-FROM maven:3.8.4-openjdk-17
+# Stage 1: Build stage
+FROM maven:3.8.4-openjdk-17 AS builder
 
-# Set the working directory
 WORKDIR /app
-
-# Copy the pom.xml and src separately
-COPY pom.xml /app
-COPY src /app/src
-
-# Run Maven build
+COPY pom.xml .
+COPY src/ ./src
 RUN mvn clean package -DskipTests
 
-# Set the entrypoint for the application
-ENTRYPOINT ["java", "-jar", "target/udise_portal-0.0.1-SNAPSHOT.jar"]
+# Stage 2: Runtime stage
+FROM openjdk:17-jdk-slim
+WORKDIR /app
 
+# Copy only the built JAR from the builder stage
+COPY --from=builder /app/target/udise_portal-0.0.1-SNAPSHOT.jar /app/app.jar
 
+# Set the entrypoint
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
