@@ -20,7 +20,7 @@ export const WebSocketProvider = ({ children }) => {
     if (!userId) return; // Ensure userId is available before connecting
 
     const client = new Client({
-      brokerURL: 'ws://udise.pytosoft.com/ws', // Backend WebSocket URL
+      brokerURL: 'wss://udise.pytosoft.com/ws', // Backend WebSocket URL
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
