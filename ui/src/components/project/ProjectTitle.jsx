@@ -47,7 +47,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const fetchData = async () => {
     try {
-      const url = `https://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
+      const url = `http://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -333,8 +333,8 @@ function ProjectTitle() {
               &times;
             </button>
             <iframe
-              src={`https://udise.pytosoft.com:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
-              // src={`https://udise.pytosoft.com/vnc`}
+              src={`http://udise.pytosoft.com:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
+              // src={`http://udise.pytosoft.com/vnc`}
               style={styles.iframe}
               title="Job Iframe"
             ></iframe>
@@ -384,7 +384,7 @@ export default ProjectTitle;
 
 //   const fetchData = async () => {
 //     try {
-//       const url = `https://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
+//       const url = `http://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {
@@ -401,7 +401,7 @@ export default ProjectTitle;
 
 //   const StartJobFetchApi = async () => {
 //     try {
-//       const url = `https://udise.pytosoft.com/v1/job/${item.id}/start`;
+//       const url = `http://udise.pytosoft.com/v1/job/${item.id}/start`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {
