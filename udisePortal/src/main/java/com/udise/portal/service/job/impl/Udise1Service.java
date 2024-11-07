@@ -62,6 +62,9 @@ public class Udise1Service {
         List<JobRecord>jobRecordList=jobRecordManager.getJobRecord(jobId);
         if(jobRecordList.size()>0){
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
+            if(dockerVo==null){
+                return new JobStartResponseVo(null,"internal server error");
+            }
             taskExecutor.execute(() -> {
                 try {
                     startChrome(dockerVo, jobId, dockerVo.getContainerId(), jobRecordList,job);
