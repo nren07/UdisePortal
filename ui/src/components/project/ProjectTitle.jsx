@@ -64,7 +64,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const StartJobFetchApi = async () => {
     try {
-      const url = `https://udise.pytosoft.com/v1/job/${item.id}/start`;
+      const url = `http://udise.pytosoft.com/v1/job/${item.id}/start`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
