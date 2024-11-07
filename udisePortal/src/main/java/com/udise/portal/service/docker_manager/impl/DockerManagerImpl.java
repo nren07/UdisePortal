@@ -82,7 +82,7 @@ public class DockerManagerImpl implements DockerManager {
     @Override
     public void waitForContainerReady(String url) throws InterruptedException,RuntimeException {
         log.info("Waiting for Selenium container to be ready at {}", url);
-        int loop_cnt=10;
+        int loop_cnt=30;
         while (loop_cnt>=0) {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
