@@ -32,12 +32,12 @@ function ProjectTitle() {
   const navigate = useNavigate();
   const { isConnected, messages } = useSocket();
 
-  console.log(vncPort);
-  console.log(showIframe);
+  // console.log(vncPort);
+  // console.log(showIframe);
 
   useEffect(() => {
     if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  }, [expirationTime, navigate]);
+  }, [navigate]);
 
   // Function to handle job start
   const handleStartJob = () => {
@@ -47,7 +47,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const fetchData = async () => {
     try {
-      const url = `http://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
+      const url = `http://localhost:8080/v1/job_record/${item.id}/get_job_records`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -64,7 +64,7 @@ function ProjectTitle() {
   // Function to fetch job records
   const StartJobFetchApi = async () => {
     try {
-      const url = `http://udise.pytosoft.com/v1/job/${item.id}/start`;
+      const url = `http://localhost:8080/v1/job/${item.id}/start`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -303,7 +303,7 @@ function ProjectTitle() {
                               )}
 
                               {jobRecordData.map((record, index) => (
-                                <tr key={record.id} className="table-row">
+                                <tr key={`${record.id}-${index}`} className="table-row">
                                   <td>{index + 1}</td>
                                   <td>{record.studentName}</td>
                                   <td>{record.className}</td>
@@ -333,8 +333,8 @@ function ProjectTitle() {
               &times;
             </button>
             <iframe
-              src={`http://udise.pytosoft.com:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
-              // src={`http://udise.pytosoft.com/vnc`}
+              src={`http://localhost:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
+              // src={`http://localhost:8080/vnc`}
               style={styles.iframe}
               title="Job Iframe"
             ></iframe>
@@ -384,7 +384,7 @@ export default ProjectTitle;
 
 //   const fetchData = async () => {
 //     try {
-//       const url = `http://udise.pytosoft.com/v1/job_record/${item.id}/get_job_records`;
+//       const url = `http://localhost:8080/v1/job_record/${item.id}/get_job_records`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {
@@ -401,7 +401,7 @@ export default ProjectTitle;
 
 //   const StartJobFetchApi = async () => {
 //     try {
-//       const url = `http://udise.pytosoft.com/v1/job/${item.id}/start`;
+//       const url = `http://localhost:8080/v1/job/${item.id}/start`;
 //       const response = await fetch(url, {
 //         method: "GET",
 //         headers: {

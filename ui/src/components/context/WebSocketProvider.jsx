@@ -20,7 +20,7 @@ export const WebSocketProvider = ({ children }) => {
     if (!userId) return; // Ensure userId is available before connecting
 
     const client = new Client({
-      brokerURL: 'ws://udise.pytosoft.com/ws', // Backend WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws', // Backend WebSocket URL
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -31,7 +31,7 @@ export const WebSocketProvider = ({ children }) => {
 
         // Subscribe to the user-specific topic after connecting
         const subscriptionPath = `/topic/${userId}`;
-        console.log(`Subscribed to: ${subscriptionPath}`);
+        // console.log(`Subscribed to: ${subscriptionPath}`);
 
         client.subscribe(subscriptionPath, (msg) => {
           const { body } = msg;
