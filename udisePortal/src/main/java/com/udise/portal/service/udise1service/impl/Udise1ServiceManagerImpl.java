@@ -1,12 +1,12 @@
-package com.udise.portal.service.job.impl;
+package com.udise.portal.service.udise1service.impl;
 
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobStatus;
-import com.udise.portal.enums.JobType;
 import com.udise.portal.service.docker_manager.DockerManager;
 import com.udise.portal.service.job.JobRecordManager;
+import com.udise.portal.service.udise1service.Udise1ServiceManager;
 import com.udise.portal.vo.docker.DockerVo;
 import com.udise.portal.vo.job.JobStartResponseVo;
 import com.udise.portal.vo.job.SocketResponseVo;
@@ -37,11 +37,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class Udise1Service {
+public class Udise1ServiceManagerImpl implements Udise1ServiceManager {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(Udise1Service.class);
+    private static final Logger log = LogManager.getLogger(Udise1ServiceManagerImpl.class);
     @Autowired
     private DockerManager dockerManager;
 
@@ -54,7 +54,7 @@ public class Udise1Service {
     @Autowired
     private JobRecordDao jobRecordDao;
 
-    public Udise1Service(SimpMessagingTemplate messagingTemplate) {
+    public Udise1ServiceManagerImpl(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -87,7 +87,7 @@ public class Udise1Service {
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
 //        String checkUrlStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
         try{
-            dockerManager.waitForContainerReady(checkUrlStatus);
+            dockerManager.waitForContainerReady(checkUrlStatus,containerId,dockerVo);
             WebDriver driver = null; // Declare driver her
             job.setJobStatus(JobStatus.IN_PROGRESS);
             log.info("Start event");

@@ -64,9 +64,12 @@ public class DockerManagerImpl implements DockerManager {
                     .withHostConfig(
                             HostConfig.newHostConfig()
                                     .withPortBindings(portBindings) // Bind host and container port
+                                    .withMemory(2 * 1024 * 1024 * 1024L) // Set memory limit to 512MB
+                                             // Set CPU share; 1024 is the default full CPU share
                     )
                     .withNetworkMode(NETWORK_NAME) // Set the network mode
                     .exec();
+
 
             log.info("Container created with ID: {}", container.getId());
 
@@ -76,14 +79,13 @@ public class DockerManagerImpl implements DockerManager {
         }
         catch (Exception e){
             e.printStackTrace();
-//            throw e;
-            return null;
+            throw e;
         }
     }
     @Override
-    public void waitForContainerReady(String url) throws InterruptedException,RuntimeException {
+    public void waitForContainerReady(String url,String containerId,DockerVo obj) throws InterruptedException,RuntimeException {
         log.info("Waiting for Selenium container to be ready at {}", url);
-        int loop_cnt=10;
+        int loop_cnt=30;
         while (loop_cnt>=0) {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -101,6 +103,7 @@ public class DockerManagerImpl implements DockerManager {
             Thread.sleep(1000);  // Wait 2 seconds before polling again
         }
         if(loop_cnt<0){
+            stopAndRemoveContainer(containerId,obj);
             throw new RuntimeException("Selenium container not ready to connect");
         }
     }

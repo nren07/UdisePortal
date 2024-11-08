@@ -8,5 +8,5 @@ public interface DockerManager {
     public DockerVo createAndStartContainer(Long jobId) throws IOException, InterruptedException;
     public void stopAndRemoveContainer(String containerId,DockerVo obj);
 
-    public void waitForContainerReady(String url) throws InterruptedException, IOException;
+    public void waitForContainerReady(String url,String containerId,DockerVo obj) throws InterruptedException, IOException;
 }
