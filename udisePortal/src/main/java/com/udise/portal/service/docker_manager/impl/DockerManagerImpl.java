@@ -64,7 +64,7 @@ public class DockerManagerImpl implements DockerManager {
                     .withHostConfig(
                             HostConfig.newHostConfig()
                                     .withPortBindings(portBindings) // Bind host and container port
-                                    .withMemory(2 * 1024 * 1024 * 1024L) // Set memory limit to 512MB
+                                    .withShmSize(1L*1024 * 1024 * 1024) // Set memory limit to 512MB
                                              // Set CPU share; 1024 is the default full CPU share
                     )
                     .withNetworkMode(NETWORK_NAME) // Set the network mode

@@ -122,8 +122,9 @@ function Upload() {
                 onChange={(e) => setSubmitData({ ...submitData, jobType: e.target.value })}
               >
                 <option value="" disabled>Select an option</option>
-                <option value="UDISE">UDISE</option>
-                <option value="DUMMY">DUMMY</option>
+                <option value="SERVICE1">SERVICE1</option>
+                <option value="SERVICE2">SERVICE2</option>
+                <option value="SERVICE3">SERVICE3</option>
               </select>
               {errors.optionError && <div className="invalid-feedback">{errors.optionError}</div>}
             </div>

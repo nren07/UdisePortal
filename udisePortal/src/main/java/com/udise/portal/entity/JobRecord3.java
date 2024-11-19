@@ -5,9 +5,6 @@ import com.udise.portal.enums.JobStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-
-
 @Entity
 @Table(name="job_record_table")
 @AllArgsConstructor
@@ -15,7 +12,7 @@ import java.util.Date;
 @Builder
 @Getter
 @Setter
-public class JobRecord {
+public class JobRecord3{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,12 +29,12 @@ public class JobRecord {
     private Double percentage;
 
     private String gender;
-    private Date dob;
+    private Double dob;
     private Double stateCode;
     private String motherName;
     private String fatherName;
     private String aadharNumber;
-    private Date dateOfAdmission;
+    private Double dateOfAdmission;
     private String address;
     private Double pinCode;
     private Double fatherMoNumber;
@@ -131,11 +128,11 @@ public class JobRecord {
         this.gender = gender;
     }
 
-    public Date getDob() {
+    public Double getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(Double dob) {
         this.dob = dob;
     }
 
@@ -171,11 +168,11 @@ public class JobRecord {
         this.aadharNumber = aadharNumber;
     }
 
-    public Date getDateOfAdmission() {
+    public Double getDateOfAdmission() {
         return dateOfAdmission;
     }
 
-    public void setDateOfAdmission(Date dateOfAdmission) {
+    public void setDateOfAdmission(Double dateOfAdmission) {
         this.dateOfAdmission = dateOfAdmission;
     }
 
@@ -323,3 +320,6 @@ public class JobRecord {
         this.jobStatus = jobStatus;
     }
 }
+
+
+

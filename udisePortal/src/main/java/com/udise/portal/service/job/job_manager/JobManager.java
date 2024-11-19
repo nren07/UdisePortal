@@ -1,11 +1,9 @@
-package com.udise.portal.service.job;
+package com.udise.portal.service.job.job_manager;
 
-import com.udise.portal.vo.job.JobRecordResponseVo;
 import com.udise.portal.vo.job.JobResVo;
 import com.udise.portal.vo.job.JobStartResponseVo;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 public interface JobManager {

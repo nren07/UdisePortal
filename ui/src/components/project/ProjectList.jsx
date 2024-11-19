@@ -49,6 +49,7 @@ export default function ProjectList() {
     <div className="row mb-5">
       {projectList.map((item) => (
         <ProjectCard key={item.id} item={item} navigate={navigate} />
+        
       ))}
     </div>
   );

@@ -1,14 +1,12 @@
-package com.udise.portal.service.udise1service.impl;
+package com.udise.portal.service.udise_manager.impl;
 
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobStatus;
 import com.udise.portal.service.docker_manager.DockerManager;
-import com.udise.portal.service.job.JobRecordManager;
-import com.udise.portal.service.udise1service.Udise1ServiceManager;
+import com.udise.portal.service.job.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.docker.DockerVo;
-import com.udise.portal.vo.job.JobStartResponseVo;
 import com.udise.portal.vo.job.SocketResponseVo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +21,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -37,11 +36,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class Udise1ServiceManagerImpl implements Udise1ServiceManager {
+public class UdiseService1 {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(Udise1ServiceManagerImpl.class);
+    private static final Logger log = LogManager.getLogger(UdiseService1.class);
     @Autowired
     private DockerManager dockerManager;
 
@@ -49,45 +48,20 @@ public class Udise1ServiceManagerImpl implements Udise1ServiceManager {
     private JobRecordManager jobRecordManager;
 
     @Autowired
-    private TaskExecutor taskExecutor;
-
-    @Autowired
     private JobRecordDao jobRecordDao;
+    @Value("${vnc-login-timeout:#{70}}")
+    private int vncLoginTimeOut;
 
-    public Udise1ServiceManagerImpl(SimpMessagingTemplate messagingTemplate) {
+    public UdiseService1(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public JobStartResponseVo startJob(Long jobId,Job job) throws IOException, InterruptedException {
-        List<JobRecord>jobRecordList=jobRecordManager.getJobRecord(jobId);
-        if(jobRecordList.size()>0){
-            DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
-            if(dockerVo==null){
-                return new JobStartResponseVo(null,"internal server error");
-            }
-            taskExecutor.execute(() -> {
-                try {
-                    startChrome(dockerVo, jobId, dockerVo.getContainerId(), jobRecordList,job);
-                } catch (InterruptedException | IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            log.info("after start Chrome function call");
-            return new JobStartResponseVo(dockerVo.getVncPort(),"Job Started");
-        }else{
-            return new JobStartResponseVo(null,"Record Not Found");
-        }
-    }
-
     @Async
-    public void startChrome(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList,Job job) throws InterruptedException, IOException {
-//        log.info("in start chrome function call");
-        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
-        String checkUrlStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
-//        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
-//        String checkUrlStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
+    public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
+        int loginTimeOut=vncLoginTimeOut;
+//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         try{
-            dockerManager.waitForContainerReady(checkUrlStatus,containerId,dockerVo);
             WebDriver driver = null; // Declare driver her
             job.setJobStatus(JobStatus.IN_PROGRESS);
             log.info("Start event");
@@ -100,11 +74,11 @@ public class Udise1ServiceManagerImpl implements Udise1ServiceManager {
                 driver = new RemoteWebDriver(new URL(url), capabilities);
                 // Maximize the browser window
                 // Set implicit wait and maximize the window
-                driver.manage().timeouts().implicitlyWait(120000, TimeUnit.SECONDS);
+                driver.manage().timeouts().implicitlyWait(2, TimeUnit.MINUTES);
                 driver.manage().window().maximize();
 
                 // Create WebDriverWait instance
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
 
                 // Navigate to the UDISE portal login page
                 driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
@@ -112,10 +86,14 @@ public class Udise1ServiceManagerImpl implements Udise1ServiceManager {
                 // Wait until the URL or page state changes after the manual click
                 String currentUrl = driver.getCurrentUrl();
 
-                while (driver.getCurrentUrl().equals(currentUrl)) {
-                    Thread.sleep(1000);  // Poll every second
+                while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
+                    Thread.sleep(1000);
+                    loginTimeOut--;  // Poll every second
+                    log.info(loginTimeOut);
                 }
-                Thread.sleep(10000);
+                if(loginTimeOut<0){
+                    return;
+                }
 
                 WebElement ele1=wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//p[text()='Current Academic Year']")));
                 ele1.click();

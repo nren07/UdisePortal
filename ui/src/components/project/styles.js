@@ -11,7 +11,7 @@ const styles = {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 1050, // High z-index to keep it on top
+      zIndex: 0, // High z-index to keep it on top
     },
     iframeContainer: {
       position: "relative",
@@ -44,6 +44,18 @@ const styles = {
       overflow: "hidden",
       border: "none",
     },
+    counter:{
+      position: "absolute",
+      top: "5px",
+      left: "40%",
+      backgroundColor: "transparent",
+      border: "none",
+      fontSize: "20px",
+      fontWeight: "bold",
+      color: "blue",
+      cursor: "pointer",
+      zIndex: 1100,
+    }
   };
 
   export {styles};

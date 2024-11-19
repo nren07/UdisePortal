@@ -1,7 +1,7 @@
 package com.udise.portal.controller;
 
 
-import com.udise.portal.service.job.JobManager;
+import com.udise.portal.service.job.job_manager.JobManager;
 
 import com.udise.portal.vo.job.JobResVo;
 import com.udise.portal.vo.job.JobStartResponseVo;

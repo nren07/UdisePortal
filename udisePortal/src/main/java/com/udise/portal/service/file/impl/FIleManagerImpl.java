@@ -6,10 +6,9 @@ import com.udise.portal.entity.AppUser;
 import com.udise.portal.entity.Job;
 import com.udise.portal.enums.ExecutionStatus;
 import com.udise.portal.enums.JobStatus;
-import com.udise.portal.enums.JobType;
 import com.udise.portal.service.aws.impl.AWSFileManagerImpl;
 import com.udise.portal.service.file.FileManager;
-import com.udise.portal.service.job.JobRecordManager;
+import com.udise.portal.service.job.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.file_upload.FileReqVo;
 import com.udise.portal.vo.job.JobResVo;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +70,7 @@ public class FIleManagerImpl extends AWSFileManagerImpl implements FileManager {
         res.setUploadedOn(job.getUploadedOn());
         // function to create job records from this job
 //        File downloadedFile=downloadFile(filePath);
-        taskExecutor.execute(()->jobRecordManager.createTask(record,file));
+        taskExecutor.execute(()->jobRecordManager.createJobRecord(record,file));
         return res;
     }
 }

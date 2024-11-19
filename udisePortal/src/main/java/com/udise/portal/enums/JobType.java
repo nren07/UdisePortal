@@ -1,8 +1,9 @@
 package com.udise.portal.enums;
 
 public enum JobType {
-    UDISE("UDISE"),
-    DUMMY("DUMMY");
+    SERVICE1("SERVICE1"),
+    SERVICE2("SERVICE2"),
+    SERVICE3("SERVICE3");
 
     private final String displayName;
 

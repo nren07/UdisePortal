@@ -1,14 +1,12 @@
-package com.udise.portal.service.job.impl;
+package com.udise.portal.service.job.job_manager.impl;
 
 import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;
-import com.udise.portal.enums.JobType;
-import com.udise.portal.service.Udise2Service.Udise2ServiceManager;
 import com.udise.portal.service.docker_manager.DockerManager;
-import com.udise.portal.service.job.JobManager;
-import com.udise.portal.service.job.JobRecordManager;
-import com.udise.portal.service.udise1service.Udise1ServiceManager;
+import com.udise.portal.service.job.job_manager.JobManager;
+import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.udise_manager.UdiseManager;
 import com.udise.portal.vo.job.*;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +44,7 @@ public class JobManagerImpl implements JobManager {
     private TaskExecutor taskExecutor;
 
     @Autowired
-    private Udise1ServiceManager udise1ServiceManager;
-    @Autowired
-    private Udise2ServiceManager udise2ServiceManager;
+    private UdiseManager udiseManager;
 
     @Override
     public List<JobResVo> getJobs(Long userId) {
@@ -64,15 +60,6 @@ public class JobManagerImpl implements JobManager {
 
     public JobStartResponseVo startJob(Long jobId) throws IOException, InterruptedException {
         Job job=jobDao.getById(Job.class,jobId);
-        if(job.getJobType()== JobType.UDISE){
-            log.info("JobType Udise Started");
-            return udise1ServiceManager.startJob(jobId,job);
-        }else if(job.getJobType()== JobType.DUMMY){
-            log.info("JobType Dummy Started");
-            return udise2ServiceManager.startJob(jobId,job);
-        }else{
-            log.info("JobType Other Started");
-            return udise1ServiceManager.startJob(jobId,job);
-        }
+        return udiseManager.startJob(jobId,job);
     }
 }

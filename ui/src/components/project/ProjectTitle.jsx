@@ -20,11 +20,12 @@ function ProjectTitle() {
   const { item } = location.state;
   // State to manage the job status
   const [isJobStarted, setIsJobStarted] = useState(
-    item.jobStatus == "PENDING" ? false : true
+    false
   );
   const [jobRecordData, setJobRecordData] = useState([]);
   const [showIframe, setShowIframe] = useState(false); // Control iframe visibility
   const [vncPort, setVncPort] = useState(null);
+  const [counter, setCounter] = useState(500);
   const token = useSelector(selectToken);
   const userId = useSelector(selectUserId);
   const role = useSelector(selectRole);
@@ -34,6 +35,19 @@ function ProjectTitle() {
 
   // console.log(vncPort);
   // console.log(showIframe);
+
+  useEffect(() => {
+    if (counter > 0 && showIframe) {
+      const timer = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+
+      // Clear the interval when component unmounts or counter reaches 0
+      return () => clearInterval(timer);
+    }else if(counter==0){
+      setShowIframe(false);
+    }
+  }, [counter,showIframe]);
 
   useEffect(() => {
     if (Date.now() >= expirationTime || !token || !userId) navigate("/");
@@ -63,6 +77,7 @@ function ProjectTitle() {
 
   // Function to fetch job records
   const StartJobFetchApi = async () => {
+    setIsJobStarted(true);
     try {
       const url = `http://localhost:8080/v1/job/${item.id}/start`;
       const response = await fetch(url, {
@@ -71,12 +86,16 @@ function ProjectTitle() {
           Authorization: `Bearer ${token}`,
         },
       });
+      if(response.ok){
+
+      }
       const data = await response.json();
       // setVncPort(data.vncPort); // Set to an empty array if not an array
-      setIsJobStarted(true);
+      
       setVncPort(data.vncPort);
     } catch (error) {
       console.error("Something went wrong", error);
+      setIsJobStarted(false);
     }
   };
 
@@ -171,7 +190,7 @@ function ProjectTitle() {
                                   ) : (
                                     <i className="fas fa-play"></i>
                                   )}
-                                  {isJobStarted ? "Job Started" : "Start Job"}
+                                  {showIframe ? "Job Started" : isJobStarted?"Wait...":"Start Job"}
                                 </button>
                               </div>
                               <div className="hstack gap-3 flex-wrap">
@@ -329,9 +348,12 @@ function ProjectTitle() {
       {showIframe && (
         <div style={styles.iframeOverlay}>
           <div style={styles.iframeContainer}>
-            <button style={styles.closeButton} onClick={closeIframe}>
-              &times;
-            </button>
+            <div className="d-flex justify-content-between">
+              <p  style={styles.counter}>login before {counter} sec</p>;
+              <button style={styles.closeButton} onClick={closeIframe}>
+                &times;
+              </button>
+            </div>
             <iframe
               src={`http://localhost:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
               // src={`http://localhost:8080/vnc`}

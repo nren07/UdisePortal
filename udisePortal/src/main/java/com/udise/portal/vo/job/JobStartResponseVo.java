@@ -11,6 +11,7 @@ public class JobStartResponseVo {
     public JobStartResponseVo(Integer vncPort, String msg) {
         this.vncPort = vncPort;
         this.msg = msg;
+
     }
 
     public Integer getVncPort() {
