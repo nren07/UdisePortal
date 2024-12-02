@@ -13,6 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -66,7 +70,7 @@ public class UdiseService2 {
 
     @Async
     public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
-//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
         int loginTimeOut=vncLoginTimeOut;
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         try{
@@ -76,12 +80,12 @@ public class UdiseService2 {
             String userid=String.valueOf(job.getAppUser().getId());
             try {
                 // Set Chrome options and capabilities
-//                ChromeOptions chromeOptions = new ChromeOptions();
-//                DesiredCapabilities capabilities = new DesiredCapabilities();
-//                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-//                driver = new RemoteWebDriver(new URL(url), capabilities);
+                ChromeOptions chromeOptions = new ChromeOptions();
+                DesiredCapabilities capabilities = new DesiredCapabilities();
+                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+                driver = new RemoteWebDriver(new URL(url), capabilities);
 
-                driver=new ChromeDriver();
+//                driver=new ChromeDriver();
                 log.info("Chrome Start");
 //                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
 
@@ -94,7 +98,7 @@ public class UdiseService2 {
                 // Navigate to the UDISE portal login page
                 driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
                 log.info("Site Rendered");
-//                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
                 // Wait until the URL or page state changes after the manual click
                 String currentUrl = driver.getCurrentUrl();
                 WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));

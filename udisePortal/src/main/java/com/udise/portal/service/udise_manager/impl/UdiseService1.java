@@ -59,8 +59,8 @@ public class UdiseService1 {
     @Async
     public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
         int loginTimeOut=vncLoginTimeOut;
-//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
-        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
+        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+//        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         try{
             WebDriver driver = null; // Declare driver her
             job.setJobStatus(JobStatus.IN_PROGRESS);

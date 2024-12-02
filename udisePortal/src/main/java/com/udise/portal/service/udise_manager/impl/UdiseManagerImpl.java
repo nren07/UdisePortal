@@ -51,8 +51,8 @@ public class UdiseManagerImpl implements UdiseManager {
 //            if(dockerVo==null){
 //                return new JobStartResponseVo(null,"internal server error");
 //            }
-//            String checkUrlStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
-            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
+            String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
+//            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
             dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo);
             taskExecutor.execute(() -> {
                 try {
