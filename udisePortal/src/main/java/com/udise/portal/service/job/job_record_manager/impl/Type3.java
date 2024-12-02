@@ -68,8 +68,8 @@ public class Type3 {
                     }
                     record.setClassName(currentRow.getCell(headerMap.get("class")).getStringCellValue());
                 }
-                if (headerMap.containsKey("pen")) {
-                    record.setStudentPen(currentRow.getCell(headerMap.get("pen")).getNumericCellValue());
+                if (headerMap.containsKey("student pen")) {
+                    record.setStudentPen(currentRow.getCell(headerMap.get("student pen")).getNumericCellValue());
                 }
                 if (headerMap.containsKey("4.2.8no. of days student attended school (in the previous academic year)")) {
                     record.setAttendance(currentRow.getCell(headerMap.get("4.2.8no. of days student attended school (in the previous academic year)")).getNumericCellValue());
@@ -114,16 +114,17 @@ public class Type3 {
                 }
                 if (headerMap.containsKey("category")) {
                     String category=currentRow.getCell(headerMap.get("category")).getStringCellValue();
-                    if(category.equals("General")){
+
+                    if(category.toLowerCase().contains("general")){
                         record.setCategory(Category.General);
                     }
-                    if(category.equals("OBC")){
+                    if(category.toLowerCase().contains("obc") ){
                         record.setCategory(Category.OBC);
                     }
-                    if(category.equals("ST")){
+                    if(category.toLowerCase().contains("st")){
                         record.setCategory(Category.ST);
                     }
-                    if(category.equals("SC")){
+                    if(category.toLowerCase().contains("sc")){
                         record.setCategory(Category.SC);
                     }
                 }
@@ -158,6 +159,10 @@ public class Type3 {
                 if (headerMap.containsKey("4.2.5(a) status of student in previous academic year of schooling")) {
                     record.setStatusOfStudentPrevAcademic(currentRow.getCell(headerMap.get("4.2.5(a) status of student in previous academic year of schooling")).getStringCellValue());
                 }
+                if (headerMap.containsKey("4.2.5(b) grade/class studied in the previous/last academic year")) {
+                    System.out.println("class studied in prev academic year"+currentRow.getCell(headerMap.get("4.2.5(b) grade/class studied in the previous/last academic year")).getStringCellValue());
+                    record.setClassStudiedInPreviousAcademicYear(currentRow.getCell(headerMap.get("4.2.5(b) grade/class studied in the previous/last academic year")).getStringCellValue());
+                }
                 if (headerMap.containsKey("4.3.6has the student been identified as a gifted / talented?")) {
                     String giftedValue = currentRow.getCell(headerMap.get("4.3.6has the student been identified as a gifted / talented?")).getStringCellValue().trim();
                     boolean isGifted = !giftedValue.equalsIgnoreCase("NO");
@@ -165,6 +170,10 @@ public class Type3 {
                 }
                 if (headerMap.containsKey("4.2.6admitted / enrolled under (only for pvt. unaided)")) {
                     record.setEnrolledUnder(currentRow.getCell(headerMap.get("4.2.6admitted / enrolled under (only for pvt. unaided)")).getStringCellValue());
+                }
+                if (headerMap.containsKey("4.2.7(a) in the previous class studied – result of the examination")) {
+                    String classStudied=currentRow.getCell(headerMap.get("4.2.7(a) in the previous class studied – result of the examination")).getStringCellValue();
+                    record.setResultOfExamination(classStudied);
                 }
                 if (headerMap.containsKey("4.3.10(a) student's height (in cms)")) {
                     record.setHeight(currentRow.getCell(headerMap.get("4.3.10(a) student's height (in cms)")).getNumericCellValue());
@@ -180,6 +189,7 @@ public class Type3 {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("error is in job upload"+e.getMessage());
         }
     }
 }

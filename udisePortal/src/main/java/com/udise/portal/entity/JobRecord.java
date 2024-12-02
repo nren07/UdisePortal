@@ -48,11 +48,21 @@ public class JobRecord {
     private boolean ews;
     private boolean cwsn;
     private boolean oosc;     //Is this Student identified as Out-of-School-Child in current or previous years?
+    private boolean isSLD; //Specific Learning Disability (SLD)?
+    private boolean isASD; //Autism Spectrum Disorder
+    private boolean isADHD; //Attention Deficit Hyperactive Disorder
+    private boolean isSportsChamp;
+    private  boolean isGifted;
+    private boolean isParticipatedNCC;
+    private boolean isDigitalyLiterate;
+
     private String bloodGroup;
     private Double admissionNumber;
     private String statusOfStudentPrevAcademic;  //4.2.5(a) Status of student in Previous Academic Year of Schooling
+    private String classStudiedInPreviousAcademicYear;
+    private String resultOfExamination;
     private String enrolledUnder;
-    private  boolean isGifted;
+
     private Double height;   //in cms
     private Double weight; //in KGs
 
@@ -259,6 +269,62 @@ public class JobRecord {
         this.oosc = oosc;
     }
 
+    public boolean isSLD() {
+        return isSLD;
+    }
+
+    public void setSLD(boolean SLD) {
+        isSLD = SLD;
+    }
+
+    public boolean isASD() {
+        return isASD;
+    }
+
+    public void setASD(boolean ASD) {
+        isASD = ASD;
+    }
+
+    public boolean isADHD() {
+        return isADHD;
+    }
+
+    public void setADHD(boolean ADHD) {
+        isADHD = ADHD;
+    }
+
+    public boolean isSportsChamp() {
+        return isSportsChamp;
+    }
+
+    public void setSportsChamp(boolean sportsChamp) {
+        isSportsChamp = sportsChamp;
+    }
+
+    public boolean isGifted() {
+        return isGifted;
+    }
+
+    public void setGifted(boolean gifted) {
+        isGifted = gifted;
+    }
+
+    public boolean isParticipatedNCC() {
+        return isParticipatedNCC;
+    }
+
+    public void setParticipatedNCC(boolean participatedNCC) {
+        isParticipatedNCC = participatedNCC;
+    }
+
+    public boolean isDigitalyLiterate() {
+        return isDigitalyLiterate;
+    }
+
+    public void setDigitalyLiterate(boolean digitalyLiterate) {
+        isDigitalyLiterate = digitalyLiterate;
+    }
+
     public String getBloodGroup() {
         return bloodGroup;
     }
@@ -291,14 +357,6 @@ public class JobRecord {
         this.enrolledUnder = enrolledUnder;
     }
 
-    public boolean isGifted() {
-        return isGifted;
-    }
-
-    public void setGifted(boolean gifted) {
-        isGifted = gifted;
-    }
-
     public Double getHeight() {
         return height;
     }
@@ -321,5 +379,21 @@ public class JobRecord {
 
     public void setJobStatus(JobStatus jobStatus) {
         this.jobStatus = jobStatus;
+    }
+
+    public String getClassStudiedInPreviousAcademicYear() {
+        return classStudiedInPreviousAcademicYear;
+    }
+
+    public void setClassStudiedInPreviousAcademicYear(String classStudiedInPreviousAcademicYear) {
+        this.classStudiedInPreviousAcademicYear = classStudiedInPreviousAcademicYear;
+    }
+
+    public String getResultOfExamination() {
+        return resultOfExamination;
+    }
+
+    public void setResultOfExamination(String resultOfExamination) {
+        this.resultOfExamination = resultOfExamination;
     }
 }

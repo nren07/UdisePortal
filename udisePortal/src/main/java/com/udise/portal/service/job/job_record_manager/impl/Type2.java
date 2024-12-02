@@ -39,149 +39,100 @@ public class Type2 {
             if (rows.hasNext()) {
                 Row headerRow = rows.next();
                 for (Cell cell : headerRow) {
-                    System.out.println(cell.getStringCellValue());
-                    headerMap.put(cell.getStringCellValue().toLowerCase(), cell.getColumnIndex());
+                    headerMap.put(cell.getStringCellValue(), cell.getColumnIndex());
                 }
             }
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
                 JobRecord record = new JobRecord();
-                if (headerMap.containsKey("student name")) {
-                    System.out.println(headerMap.get("student name"));
-                    if(currentRow.getCell(headerMap.get("student name")).getStringCellValue().equals("")){
-//                            messagingTemplate.convertAndSend("/topic/"+job.getAppUser().getId(), new SocketResponseVo("Upload Alert", ""));
-                        log.info("Uploaded Job Name field Empty");
-                        break;
+                if (headerMap.containsKey("Name")) {
+                    record.setStudentName(currentRow.getCell(headerMap.get("Name")).getStringCellValue());
+                }
+                if (headerMap.containsKey("Section")) {
+                    record.setSection(currentRow.getCell(headerMap.get("Section")).getStringCellValue());
+                }
+                if (headerMap.containsKey("Class")) {
+                    record.setClassName(currentRow.getCell(headerMap.get("Class")).getStringCellValue());
+                }
+                if (headerMap.containsKey("Student PEN")) {
+                    try{
+                        record.setStudentPen(Double.parseDouble(currentRow.getCell(headerMap.get("Student PEN")).getStringCellValue()));
+                    }catch (Exception e){
+                        log.info("student pen is :"+currentRow.getCell(headerMap.get("Student PEN")).getStringCellValue());
+                        log.error("student pen is not valid");
                     }
-                    record.setStudentName(currentRow.getCell(headerMap.get("student name")).getStringCellValue());
                 }
-                if (headerMap.containsKey("section")) {
-                    if(currentRow.getCell(headerMap.get("section")).getStringCellValue()==""){
-                        log.info("Uploaded Job section field Empty");
-                        break;
+                if (headerMap.containsKey("Gender")) {
+                    record.setGender(currentRow.getCell(headerMap.get("Gender")).getStringCellValue());
+                }
+                if (headerMap.containsKey("Student State Code")) {
+                    try{
+                        record.setStateCode(Double.parseDouble(currentRow.getCell(headerMap.get("Student State Code")).getStringCellValue()));
+                    }catch (Exception e){
+                        log.info("Student state code is : "+currentRow.getCell(headerMap.get("Student State Code")).getStringCellValue());
+                        log.error("Student state code is not valid");
                     }
-                    record.setSection(currentRow.getCell(headerMap.get("section")).getStringCellValue());
                 }
-                if (headerMap.containsKey("class")) {
-                    if(currentRow.getCell(headerMap.get("class")).getStringCellValue()==""){
-                        log.info("Uploaded Job class field Empty");
-                        break;
-                    }
-                    record.setClassName(currentRow.getCell(headerMap.get("class")).getStringCellValue());
+                if (headerMap.containsKey("Mother Name")) {
+                    record.setMotherName(currentRow.getCell(headerMap.get("Mother Name")).getStringCellValue());
                 }
-                if (headerMap.containsKey("pen")) {
-                    record.setStudentPen(currentRow.getCell(headerMap.get("pen")).getNumericCellValue());
+                if (headerMap.containsKey("Father Name")) {
+                    record.setFatherName(currentRow.getCell(headerMap.get("Father Name")).getStringCellValue());
                 }
-                if (headerMap.containsKey("4.2.8no. of days student attended school (in the previous academic year)")) {
-                    record.setAttendance(currentRow.getCell(headerMap.get("4.2.8no. of days student attended school (in the previous academic year)")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("4.2.7(b) in the previous class studied – marks obtained (in percentage)")) {
-                    record.setPercentage(currentRow.getCell(headerMap.get("4.2.7(b) in the previous class studied – marks obtained (in percentage)")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("gender")) {
-                    record.setGender(currentRow.getCell(headerMap.get("gender")).getStringCellValue());
-                }
-                if (headerMap.containsKey("date of birth")) {
-                    record.setDob(currentRow.getCell(headerMap.get("date of birth")).getDateCellValue());
-                }
-                if (headerMap.containsKey("student state code")) {
-                    record.setStateCode(currentRow.getCell(headerMap.get("student state code")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("mother's name")) {
-                    record.setMotherName(currentRow.getCell(headerMap.get("mother's name")).getStringCellValue());
-                }
-                if (headerMap.containsKey("father's name")) {
-                    record.setFatherName(currentRow.getCell(headerMap.get("father's name")).getStringCellValue());
-                }
-                if (headerMap.containsKey("aadhar number")) {
-                    record.setAadharNumber(currentRow.getCell(headerMap.get("aadhar number")).getStringCellValue());
-                }
+//                if (headerMap.containsKey("AADHAAR No.")) {
+//                    if(!currentRow.getCell(headerMap.get("AADHAAR No.")).getStringCellValue().equals("NOT AVAILABLE")){
+//                        record.setAadharNumber(currentRow.getCell(headerMap.get("AADHAAR No.")).getStringCellValue());
+//                    }
+//                }
+                if (headerMap.containsKey("Social Category")) {
+                    String category=currentRow.getCell(headerMap.get("Social Category")).getStringCellValue();
 
-                if (headerMap.containsKey("date of admission")) {
-                    record.setDateOfAdmission(currentRow.getCell(headerMap.get("date of admission")).getDateCellValue());
-                }
-                if (headerMap.containsKey("address ")) {
-                    record.setAddress(currentRow.getCell(headerMap.get("address ")).getStringCellValue());
-                }
-                if (headerMap.containsKey("pin code")) {
-                    record.setPinCode(currentRow.getCell(headerMap.get("pin code")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("father's mobile no")) {
-                    record.setFatherMoNumber(currentRow.getCell(headerMap.get("father's mobile no")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("mother tongue of the student")) {
-                    record.setMotherTongue(currentRow.getCell(headerMap.get("mother tongue of the student")).getStringCellValue());
-                }
-                if (headerMap.containsKey("category")) {
-                    String category=currentRow.getCell(headerMap.get("category")).getStringCellValue();
-                    switch (category) {
-                        case "General":
-                            record.setCategory(Category.General);
-                            break;
-                        case "OBC":
-                            record.setCategory(Category.OBC);
-                            break;
-                        case "ST":
-                            record.setCategory(Category.ST);
-                            break;
-                        case "SC":
-                            record.setCategory(Category.SC);
-                            break;
-                        default:
-                            // Handle unknown category if needed
-                            break;
+                    if(category.toLowerCase().contains("general")){
+                        record.setCategory(Category.General);
+                    }
+                    if(category.toLowerCase().contains("obc") ){
+                        record.setCategory(Category.OBC);
+                    }
+                    if(category.toLowerCase().contains("st")){
+                        record.setCategory(Category.ST);
+                    }
+                    if(category.toLowerCase().contains("sc")){
+                        record.setCategory(Category.SC);
                     }
                 }
-                if (headerMap.containsKey("minority group")) {
-                    record.setMinorityGroup(currentRow.getCell(headerMap.get("minority group")).getStringCellValue());
+                if (headerMap.containsKey("Minority Group")) {
+                    String minority=currentRow.getCell(headerMap.get("Minority Group")).getStringCellValue();
+                    if(minority.contains("Muslim"))record.setMinorityGroup("1-Muslim");
+                    if(minority.contains("Christian"))record.setMinorityGroup("2-Christian");
+                    if(minority.contains("Sikh"))record.setMinorityGroup("3-Sikh");
+                    if(minority.contains("Buddhist"))record.setMinorityGroup("4-Buddhist");
+                    if(minority.contains("Parsi"))record.setMinorityGroup("5-Parsi");
+                    if(minority.contains("Jain"))record.setMinorityGroup("6-Jain");
+                    if(minority.contains("NA"))record.setMinorityGroup("7-NA");
+
                 }
-                if (headerMap.containsKey("whether bpl beneficiary?")) {
-                    Boolean isBpl= !currentRow.getCell(headerMap.get("whether bpl beneficiary?")).getStringCellValue().equals("NO");
+                if (headerMap.containsKey("BPL beneficiary")) {
+                    Boolean isBpl= !currentRow.getCell(headerMap.get("BPL beneficiary")).getStringCellValue().equals("No");
                     record.setBpl(isBpl);
                 }
-                if (headerMap.containsKey("whether belongs to ews / disadvantaged group?")) {
-                    String ewsValue = currentRow.getCell(headerMap.get("whether belongs to ews / disadvantaged group?")).getStringCellValue().trim();
-                    boolean isEws = !ewsValue.equalsIgnoreCase("NO");
-                    record.setEws(isEws);
-                }
-                if (headerMap.containsKey("whether cwsn?")) {
-                    String cwsnValue = currentRow.getCell(headerMap.get("whether cwsn?")).getStringCellValue().trim();
-                    boolean isCwsn = !cwsnValue.equalsIgnoreCase("NO");
+                if (headerMap.containsKey("CWSN")) {
+                    String cwsnValue = currentRow.getCell(headerMap.get("CWSN")).getStringCellValue().trim();
+                    boolean isCwsn = !cwsnValue.equalsIgnoreCase("No");
                     record.setCwsn(isCwsn);
                 }
-                if (headerMap.containsKey("is this student identified as out-of-school-child in current or previous years?")) {
-                    String ooscValue = currentRow.getCell(headerMap.get("is this student identified as out-of-school-child in current or previous years?")).getStringCellValue().trim();
-                    boolean isOosc = !ooscValue.equalsIgnoreCase("NO");
-                    record.setOosc(isOosc);
-                }
-                if (headerMap.containsKey("blood group")) {
-                    record.setBloodGroup(currentRow.getCell(headerMap.get("blood group")).getStringCellValue());
-                }
-                if (headerMap.containsKey("admission number")) {
-                    record.setAdmissionNumber(currentRow.getCell(headerMap.get("admission number")).getNumericCellValue());
-                }
-                if (headerMap.containsKey("4.2.5(a) status of student in previous academic year of schooling")) {
-                    record.setStatusOfStudentPrevAcademic(currentRow.getCell(headerMap.get("4.2.5(a) status of student in previous academic year of schooling")).getStringCellValue());
-                }
-                if (headerMap.containsKey("4.3.6has the student been identified as a gifted / talented?")) {
-                    String giftedValue = currentRow.getCell(headerMap.get("4.3.6has the student been identified as a gifted / talented?")).getStringCellValue().trim();
-                    boolean isGifted = !giftedValue.equalsIgnoreCase("NO");
-                    record.setGifted(isGifted);
-                }
-                if (headerMap.containsKey("4.2.6admitted / enrolled under (only for pvt. unaided)")) {
-                    record.setEnrolledUnder(currentRow.getCell(headerMap.get("4.2.6admitted / enrolled under (only for pvt. unaided)")).getStringCellValue());
-                }
-                if (headerMap.containsKey("4.3.10(a) student's height (in cms)")) {
-                    record.setHeight(currentRow.getCell(headerMap.get("4.3.10(a) student's height (in cms)")).getNumericCellValue());
+                if (headerMap.containsKey("Admission No.")) {
+                    try{
+                        String admissionNo=currentRow.getCell(headerMap.get("Admission No.")).getStringCellValue();
+                        record.setAdmissionNumber(Double.parseDouble(admissionNo));
+                    }catch (Exception e){
+                        log.info("admission no is : {}", currentRow.getCell(headerMap.get("Admission No.")).getStringCellValue());
+                        log.error("admission no is not present");
+                    }
                 }
 
-                if (headerMap.containsKey("(b) student's weight (in kgs)")) {
-                    record.setWeight(currentRow.getCell(headerMap.get("(b) student's weight (in kgs)")).getNumericCellValue());
-                }
                 record.setJob(job);
                 record.setJobStatus(JobStatus.PENDING);
                 jobRecordDao.save(record);
-
             }
 
         } catch (IOException e) {

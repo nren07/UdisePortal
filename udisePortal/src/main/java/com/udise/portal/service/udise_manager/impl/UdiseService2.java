@@ -5,6 +5,7 @@ import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobStatus;
 import com.udise.portal.service.docker_manager.DockerManager;
+import com.udise.portal.service.error_log.ErrorLogManager;
 import com.udise.portal.service.job.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.docker.DockerVo;
 import com.udise.portal.vo.job.SocketResponseVo;
@@ -12,9 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,10 +24,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +36,8 @@ public class UdiseService2 {
     private final SimpMessagingTemplate messagingTemplate;
 
     private static final Logger log = LogManager.getLogger(UdiseService1.class);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Adjust the pattern as needed
+    DecimalFormat df=new DecimalFormat("0.##########");
     @Autowired
     private DockerManager dockerManager;
 
@@ -54,23 +53,25 @@ public class UdiseService2 {
     @Value("${vnc-login-timeout:#{70}}")
     private int vncLoginTimeOut;
 
-    private Map<Long,Boolean>liveJobs;
+    private Map<Long,Boolean> liveJobs;
+
+    @Autowired
+    private ErrorLogManager errorLogManager;
+
 
     public UdiseService2(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
-        liveJobs=new HashMap<>();
     }
 
 
     @Async
     public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
-//        log.info("in start chrome function call");
 //        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
         int loginTimeOut=vncLoginTimeOut;
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         try{
             WebDriver driver = null; // Declare driver her
-            job.setJobStatus(JobStatus.IN_PROGRESS);
+//            job.setJobStatus(JobStatus.IN_PROGRESS);
             log.info("Job Start");
             String userid=String.valueOf(job.getAppUser().getId());
             try {
@@ -79,20 +80,22 @@ public class UdiseService2 {
 //                DesiredCapabilities capabilities = new DesiredCapabilities();
 //                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 //                driver = new RemoteWebDriver(new URL(url), capabilities);
-//                System.setProperty("webdriver.chrome.driver", "C:/drivers/chromedriver.exe");
-                driver = new ChromeDriver();
-                log.info("Chrome Start");
 
-                driver.manage().timeouts().implicitlyWait(6, TimeUnit.MINUTES);
+                driver=new ChromeDriver();
+                log.info("Chrome Start");
+//                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+
+                driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
                 driver.manage().window().maximize();
 
                 // Create WebDriverWait instance
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(1));
-                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
                 // Navigate to the UDISE portal login page
                 driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
                 log.info("Site Rendered");
-
+//                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+                // Wait until the URL or page state changes after the manual click
                 String currentUrl = driver.getCurrentUrl();
                 WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));
                 usernameField.sendKeys("08122604122");
@@ -107,7 +110,7 @@ public class UdiseService2 {
                 if(loginTimeOut<0){
                     return;
                 }
-
+                System.out.println("after return ");
                 WebElement ele1=wait.until(ExpectedConditions.elementToBeClickable(By.className("clearfix"))); //current academic year
                 ele1.click();
                 log.info("after current academic year");
@@ -119,18 +122,21 @@ public class UdiseService2 {
                 log.info("after Dashboard ");
                 List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
                 log.info("length of rows are : {}",rows.size());
+
                 WebElement row1=rows.get(0);
                 List<WebElement> cols = row1.findElements(By.cssSelector("td"));
                 WebElement actionBtn = cols.get(7);
                 WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
                 viewAndManageBtn.click();
-                update(wait,driver);
+                update(wait,driver,jobId);
             } catch (WebDriverException e) {
                 log.error("WebDriver encountered an error", e);
             } catch (Exception e) {
                 log.error("An unexpected error occurred", e);
             }
             finally {
+                // Close the driver safely
+                log.info("in case of return finally block");
                 if (driver != null) {
                     driver.quit();
                 }
@@ -143,104 +149,60 @@ public class UdiseService2 {
         }
     }
 
-    public void update(WebDriverWait wait,WebDriver driver) throws InterruptedException {
-        // Locate the 'ul' container by class
-        WebElement sectionSearchContainer = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("ul.sectionSearch.mt-2")));
 
-        // Locate the 'Class' dropdown inside the 'ul' container
-        WebElement classDropdown = sectionSearchContainer.findElement(By.cssSelector("select.form-select.w210"));
-        Select classSelect = new Select(classDropdown);
-
-        // Iterate over all 'Class' options
-        List<WebElement> classOptions = classSelect.getOptions();
-        for (WebElement classOption : classOptions) {
-            String classText = classOption.getText();
-            String classValue = classOption.getAttribute("value");
-            System.out.println("Class: " + classText + " (Value: " + classValue + ")");
-            Thread.sleep(500);
-            if(classOption.isEnabled()){
-                if(classOption.getText().equals("III")){
-                    classSelect.selectByVisibleText(classOption.getText());
-                    Thread.sleep(500);
-                    log.info("inside if block");
+    public void update(WebDriverWait wait,WebDriver driver,Long jobId) throws InterruptedException {
+        List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
+        ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
+        for (JobRecord record : records) {
+            if(record.getJobStatus()!=JobStatus.COMPLETED){
+                try{
+                    record.setJobStatus(JobStatus.IN_PROGRESS);
+                    jobRecordDao.update(record);
+                    WebElement sectionSearchContainer = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("ul.sectionSearch.mt-2")));
+                    WebElement classDropdown = sectionSearchContainer.findElement(By.cssSelector("select.form-select.w210"));
+                    Select classSelect = new Select(classDropdown);
+                    classSelect.selectByVisibleText(record.getClassName());
                     WebElement sectionDropdown = sectionSearchContainer.findElement(By.cssSelector("select.form-select.w150"));
                     Select sectionSelect = new Select(sectionDropdown);
+
+                    sectionSelect.selectByVisibleText(record.getSection());
                     WebElement search_input = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@placeholder='Search']")));
+                    search_input.clear();
+                    search_input.sendKeys(df.format(record.getStudentPen()));
+                    List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+                    WebElement row1=rows.get(0);
+                    List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+                    WebElement actionBtn = cols.get(5);
+                    if(actionBtn.getText().contains("Completed")) continue;
 
-                    // Iterate over all 'Section' options
-                    List<WebElement> sectionOptions = sectionSelect.getOptions();
-                    int cnt1=0;
-                    int cnt2=0;
-                    int cnt3=0;
-                    for (WebElement sectionOption : sectionOptions) {
-                        if(sectionOption.isEnabled() && sectionOption.getText().equals("A")){
-                            search_input.clear();
-                            search_input.sendKeys("20046772697");
-                            WebElement gp = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'GP')]")));
-                            gp.click();
-                            generalProfileUpdate(wait,driver);
-                            Thread.sleep(10000);
-                            enrolmentProfileUpdate(wait,driver);
-                            Thread.sleep(10000);
-                            facilityProfileUpdate(wait,driver);
+                    WebElement gp = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'GP')]")));
+                    WebElement ep = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'EP')]")));
+                    WebElement fp = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'FP')]")));
+                    if(gp.getAttribute("class").contains("incomplete")){
+                        gp.click();
+                        Thread.sleep(1000);
+                        generalProfileUpdate(wait, record, driver);
+                        enrolmentProfileUpdate(wait, record, driver);
+                        facilityProfileUpdate(wait, record, driver);
+                    }else if(ep.getAttribute("class").contains("incomplete")){
+                        ep.click();
+                        Thread.sleep(1000);
+                        enrolmentProfileUpdate(wait, record, driver);
+                        facilityProfileUpdate(wait, record, driver);
+                    }else if(fp.getAttribute("class").contains("incomplete")){
+                        fp.click();
+                        Thread.sleep(1000);
+                        facilityProfileUpdate(wait, record, driver);
+                    }else continue;
 
-//                            try{
-//                                generalProfileUpdate(wait,driver);
-//                            }catch (Exception e){
-//                                e.printStackTrace();
-//                                throw e;
-////                                if(cnt1<=3){
-////                                    cnt1++;
-////                                    log.info("cnt1 is : {}",cnt1);
-////                                    generalProfileUpdate(wait,driver);
-////                                }else{
-////                                    throw e;
-////                                }
-//                            }
-//                            try{
-//                                enrolmentProfileUpdate(wait);
-//                            }catch (Exception e){
-//                                e.printStackTrace();
-//                                throw e;
-////                                if(cnt2<=3){
-////                                    cnt2++;
-////                                    log.info("cnt2 is :{}",cnt2);
-////                                    generalProfileUpdate(wait,driver);
-////                                }else{
-////                                    throw e;
-////                                }
-//                            }
-//                            try{
-//                                facilityProfileUpdate(wait,driver);
-//                            }catch (Exception e){
-//                                e.printStackTrace();
-//                                if(cnt3<=3){
-//                                    cnt3++;
-//                                    log.info("cnt3 is :{}",cnt3);
-//                                    facilityProfileUpdate(wait,driver);
-//                                }else{
-//                                    throw e;
-//                                }
-//                            }
-                            Thread.sleep(20000);
-
-//                            //go to dashboard
-//                            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
-//                            List<WebElement> cols = rows.get(4).findElements(By.cssSelector("td"));
-//                            WebElement actionBtn = cols.get(7);
-//                            List<WebElement> buttons = actionBtn.findElements(By.tagName("a"));
-//                            WebElement viewAndManageBtn=buttons.get(0);
-//                            viewAndManageBtn.click();
-                            break;
-                        }
-
-                    }
+                }catch (Exception e){
+                    log.info("error while doing operation in student :{}",record.getStudentName());
                 }
             }
         }
     }
 
-    private void generalProfileUpdate(WebDriverWait wait,WebDriver driver) throws InterruptedException {
+    private void generalProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws InterruptedException {
         try{
             Thread.sleep(5000);
             List<WebElement> saveButtons = wait.until(
@@ -258,13 +220,25 @@ public class UdiseService2 {
             nextBtnGP.click();
             log.info("next Btn clicked");
         }catch (Exception e){
-            log.info("Error In General Profile");
-            e.printStackTrace();
+            errorLogManager.logError(record,e, "Context info about this error", "ERROR",
+                    this.getClass().getName(), "fillGeneralProfile");
+            log.info("Error In General Profile: {}",e.getCause());
+            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
+            ele3.click();
+            log.info("after Dashboard ");
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            log.info("length of rows are : {}",rows.size());
 
+            WebElement row1=rows.get(0);
+            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+            WebElement actionBtn = cols.get(7);
+            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewAndManageBtn.click();
+            e.printStackTrace();
             throw e;
         }
     }
-    private void enrolmentProfileUpdate(WebDriverWait wait,WebDriver driver) throws InterruptedException {
+    private void enrolmentProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws InterruptedException {
         try{
             WebElement mediumOfInstructionDropDown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='mediumOfInstruction']")));
             Select mediumOfInstructionSelect = new Select(mediumOfInstructionDropDown);
@@ -302,57 +276,122 @@ public class UdiseService2 {
             nextBtns.get(1).click();
             log.info("next Btn of ep clicked");
         }catch (Exception e){
-            log.error("Error In Enrolment Profile");
+            log.info("Error In Enrolment Profile");
+            errorLogManager.logError(record,e, "Context info about this error", "ERROR",
+                    this.getClass().getName(), "enrollmentProfileerror");
+            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
+            ele3.click();
+            log.info("after Dashboard ");
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            log.info("length of rows are : {}",rows.size());
+
+            WebElement row1=rows.get(0);
+            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+            WebElement actionBtn = cols.get(7);
+            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewAndManageBtn.click();
             e.printStackTrace();
             throw e;
         }
     }
-
-    private void facilityProfileUpdate(WebDriverWait wait,WebDriver driver) throws InterruptedException {
+    private void facilityProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws InterruptedException {
         try{
-            Thread.sleep(5000);
-            WebElement radioButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@name='olympdsNlc' and @value='2']")));
-            radioButton.click();
-            // Locate the dropdown element
+            if(record.isSLD()){
+                WebElement screenedForSldRadio = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='1' and @formcontrolname='screenedForSld']")));
+                screenedForSldRadio.click();
+            }else{
+                WebElement screenedForSldRadio = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='2' and @formcontrolname='screenedForSld']")));
+                screenedForSldRadio.click();
+            }
+
+            if(record.isASD()){
+                WebElement autismSpectrumDisorderRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='1' and @formcontrolname='autismSpectrumDisorder']")));
+                autismSpectrumDisorderRadioBtn.click();
+            }else{
+                WebElement autismSpectrumDisorderRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='2' and @formcontrolname='autismSpectrumDisorder']")));
+                autismSpectrumDisorderRadioBtn.click();
+            }
+
+            if(record.isADHD()){
+                WebElement attentionDeficitHyperactiveDisorderRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='1' and @formcontrolname='attentionDeficitHyperactiveDisorder']")));
+                attentionDeficitHyperactiveDisorderRadioBtn.click();
+            }else{
+                WebElement attentionDeficitHyperactiveDisorderRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='2' and @formcontrolname='attentionDeficitHyperactiveDisorder']")));
+                attentionDeficitHyperactiveDisorderRadioBtn.click();
+            }
+
+            if(record.isGifted()){
+                WebElement giftedChildrenRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='1' and @formcontrolname='giftedChildrenYn']")));
+                giftedChildrenRadioBtn.click();
+            }else{
+                WebElement giftedChildrenRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='2' and @formcontrolname='giftedChildrenYn']")));
+                giftedChildrenRadioBtn.click();
+            }
+
+            if(record.isSportsChamp()){
+                WebElement olympdsNlcRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='1' and @formcontrolname='olympdsNlc']")));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", olympdsNlcRadioBtn);
+                olympdsNlcRadioBtn.click();
+            }else{
+                WebElement olympdsNlcRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='2' and @formcontrolname='olympdsNlc']")));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", olympdsNlcRadioBtn);
+                olympdsNlcRadioBtn.click();
+            }
+
+            if(record.isParticipatedNCC()){
+                WebElement nccNssRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='1' and @formcontrolname='nccNssYn']")));
+                nccNssRadioBtn.click();
+            }else{
+                WebElement nccNssRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='2' and @formcontrolname='nccNssYn']")));
+                nccNssRadioBtn.click();
+            }
+
+            if(record.isDigitalyLiterate()){
+                WebElement digitalCapableRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='1' and @formcontrolname='digitalCapableYn']")));
+                digitalCapableRadioBtn.click();
+            }else{
+                WebElement digitalCapableRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='2' and @formcontrolname='digitalCapableYn']")));
+                digitalCapableRadioBtn.click();
+            }
+
+            WebElement heightInCm = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@formcontrolname='heightInCm']")));
+            if(heightInCm.getAttribute("value").isBlank()){
+                heightInCm.sendKeys(df.format(record.getHeight()));
+            }
+            WebElement weightInKg = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@formcontrolname='weightInKg']")));
+            if(weightInKg.getAttribute("value").isBlank()){
+                weightInKg.sendKeys(df.format(record.getWeight()));
+            }
+
+
             WebElement distanceDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='distanceFrmSchool']")));
-
-            // Create a Select instance
             Select distanceSelect = new Select(distanceDropdown);
-
-            // Option 1: Select by index (e.g., first option other than "Select" is index 1)
-            distanceSelect.selectByIndex(2); // Index 1 corresponds to "1 - Less than 1 km"
+            distanceSelect.selectByValue("2");
 
             // Locate the dropdown element
             WebElement parentEducationDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='parentEducation']")));
             Select parentEducationSelect = new Select(parentEducationDropdown);
-            parentEducationSelect.selectByIndex(4); // This will select "1 - Primary"
-            log.info("befor save btn click");
-            String mainWindowHandle = driver.getWindowHandle();
-            log.info("Windows presents : {}",driver.getWindowHandles().size());
+            parentEducationSelect.selectByValue("5");
 
-//            WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[span[contains(text(), ' Save ')]]")));
-//            saveButton.click();
-//            WebElement saveButtonFP = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[_ngcontent*='viw-c296']")));
-//            saveButtonFP.click();
             List<WebElement> saveButtons = wait.until(
                     ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//button[./span[normalize-space(text())='Save']]"))
             );
             log.info("list of save btns:{}",saveButtons.size());
             WebElement saveButton = saveButtons.get(2);
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", saveButton);
-            Thread.sleep(5000);
+            Thread.sleep(2000);
             saveButton.click();
             log.info("After save button click FP");
 
             log.info("after btn click");
             WebElement closeBtnFP = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(), 'Close')]")));
+            Thread.sleep(1000);
             closeBtnFP.click();
             List<WebElement> nextBtns = wait.until(
                     ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//button[./span[normalize-space(text())='Next']]"))
             );
-
+            Thread.sleep(1000);
             nextBtns.get(2).click();
-            Thread.sleep(5000);
             try{
                 WebElement fpCompleteDataBtn = wait.until(
                         ExpectedConditions.elementToBeClickable(By.xpath("//button[span[normalize-space(text())='Complete Data']]"))
@@ -360,47 +399,56 @@ public class UdiseService2 {
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", fpCompleteDataBtn);
 
                 wait.until(ExpectedConditions.elementToBeClickable(fpCompleteDataBtn));
-                Thread.sleep(5000);
+                Thread.sleep(1000);
                 fpCompleteDataBtn.click();
 
                 WebElement fpOkayBtn = wait.until(
                         ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Okay')]"))
                 );
-                Thread.sleep(5000);
+                Thread.sleep(1000);
                 fpOkayBtn.click();
                 WebElement confirmOkeyBtn = wait.until(
                         ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Okay')]"))
                 );
+                Thread.sleep(1000);
                 confirmOkeyBtn.click();
+                record.setJobStatus(JobStatus.COMPLETED);
+                jobRecordDao.update(record);
             }catch (Exception e){
+                errorLogManager.logError(record,e, "Already profile completed", "ERROR",
+                        this.getClass().getName(), "facilityProfileUpdate Error");
                 e.printStackTrace();
             }
 
-//            WebElement nextBtn2 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Next')]")));
-//            nextBtn2.click();
-            WebElement backToSchoolDashboardBtn = wait.until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//button[span[normalize-space(text())='Back To School Dashboard']]"))
-            );
+            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
+            ele3.click();
+            log.info("after Dashboard ");
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            log.info("length of rows are : {}",rows.size());
 
-// Scroll the element into view only when it's clickable
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", backToSchoolDashboardBtn);
-
-// Optionally, wait for the element to become clickable after scrolling into view
-            wait.until(ExpectedConditions.elementToBeClickable(backToSchoolDashboardBtn));
-
-// Click the button
-            Thread.sleep(5000);
-            backToSchoolDashboardBtn.click();
-//            generalProfileUpdate(wait,driver);
-//            enrolmentProfileUpdate(wait,driver);
-//            facilityProfileUpdate(wait,driver);
-
+            WebElement row1=rows.get(0);
+            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+            WebElement actionBtn = cols.get(7);
+            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewAndManageBtn.click();
         }catch (Exception e){
-            log.error("Error In Facility Profile");
+            errorLogManager.logError(record,e, "Context info about this error", "ERROR",
+                    this.getClass().getName(), "facilityProfileUpdate");
+            log.info("Error In Facility Profile");
             e.printStackTrace();
+            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
+            ele3.click();
+            log.info("after Dashboard ");
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            log.info("length of rows are : {}",rows.size());
+
+            WebElement row1=rows.get(0);
+            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+            WebElement actionBtn = cols.get(7);
+            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewAndManageBtn.click();
             throw e;
         }
     }
-
 
 }

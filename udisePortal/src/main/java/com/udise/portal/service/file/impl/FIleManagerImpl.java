@@ -70,7 +70,7 @@ public class FIleManagerImpl extends AWSFileManagerImpl implements FileManager {
         res.setUploadedOn(job.getUploadedOn());
         // function to create job records from this job
 //        File downloadedFile=downloadFile(filePath);
-        taskExecutor.execute(()->jobRecordManager.createJobRecord(record,file));
+        taskExecutor.execute(()->jobRecordManager.createJobRecord(job,file));
         return res;
     }
 }
