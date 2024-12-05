@@ -65,7 +65,7 @@ public class JobRecordManagerImpl implements JobRecordManager {
             }
             responseVoList.add(obj);
         }
-        if(isJobComplete){
+        if(isJobComplete && !records.isEmpty()){
             Job job=records.get(0).getJob();
             jobDao.update(job);
         }

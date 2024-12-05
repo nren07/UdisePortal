@@ -34,19 +34,19 @@ public class JwtUtil {
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    public  String extractUsername(String token) {
+    public static String extractUsername(String token) {
         String sub= extractAllClaims(token).getSubject();
         System.out.println(sub);
         return sub;
     }
 
-    private  Claims extractAllClaims(String token) {
+    private static Claims extractAllClaims(String token) {
         Claims cls= Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         System.out.println(cls.toString());
         return cls;
     }
 
-    private  boolean isTokenExpired(String token) {
+    private static boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 }

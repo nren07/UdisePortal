@@ -25,22 +25,23 @@ public class JobRecord {
     private Job job;
 
     private String studentName;
+    private String nameAsAadhar;
     private String className;
     private String section;
-    private Double studentPen;
-    private Double attendance;
+    private Long studentPen;
+    private Long attendance;
     private Double percentage;
 
     private String gender;
     private Date dob;
-    private Double stateCode;
+    private Long stateCode;
     private String motherName;
     private String fatherName;
     private String aadharNumber;
     private Date dateOfAdmission;
     private String address;
-    private Double pinCode;
-    private Double fatherMoNumber;
+    private Long pinCode;
+    private Long fatherMoNumber;
     private String motherTongue;
     private Category category;
     private String minorityGroup;
@@ -57,7 +58,7 @@ public class JobRecord {
     private boolean isDigitalyLiterate;
 
     private String bloodGroup;
-    private Double admissionNumber;
+    private Long admissionNumber;
     private String statusOfStudentPrevAcademic;  //4.2.5(a) Status of student in Previous Academic Year of Schooling
     private String classStudiedInPreviousAcademicYear;
     private String resultOfExamination;
@@ -109,20 +110,20 @@ public class JobRecord {
         this.section = section;
     }
 
-    public Double getStudentPen() {
+    public Long getStudentPen() {
         return studentPen;
     }
 
     public void setStudentPen(Double studentPen) {
-        this.studentPen = studentPen;
+        this.studentPen = studentPen.longValue();
     }
 
-    public Double getAttendance() {
+    public Long getAttendance() {
         return attendance;
     }
 
     public void setAttendance(Double attendance) {
-        this.attendance = attendance;
+        this.attendance = attendance.longValue();
     }
 
     public Double getPercentage() {
@@ -149,12 +150,12 @@ public class JobRecord {
         this.dob = dob;
     }
 
-    public Double getStateCode() {
+    public Long getStateCode() {
         return stateCode;
     }
 
     public void setStateCode(Double stateCode) {
-        this.stateCode = stateCode;
+        this.stateCode = stateCode.longValue();
     }
 
     public String getMotherName() {
@@ -197,20 +198,20 @@ public class JobRecord {
         this.address = address;
     }
 
-    public Double getPinCode() {
+    public Long getPinCode() {
         return pinCode;
     }
 
     public void setPinCode(Double pinCode) {
-        this.pinCode = pinCode;
+        this.pinCode = pinCode.longValue();
     }
 
-    public Double getFatherMoNumber() {
+    public Long getFatherMoNumber() {
         return fatherMoNumber;
     }
 
     public void setFatherMoNumber(Double fatherMoNumber) {
-        this.fatherMoNumber = fatherMoNumber;
+        this.fatherMoNumber = fatherMoNumber.longValue();
     }
 
     public String getMotherTongue() {
@@ -333,12 +334,12 @@ public class JobRecord {
         this.bloodGroup = bloodGroup;
     }
 
-    public Double getAdmissionNumber() {
+    public Long getAdmissionNumber() {
         return admissionNumber;
     }
 
     public void setAdmissionNumber(Double admissionNumber) {
-        this.admissionNumber = admissionNumber;
+        this.admissionNumber = admissionNumber.longValue();
     }
 
     public String getStatusOfStudentPrevAcademic() {
@@ -395,5 +396,13 @@ public class JobRecord {
 
     public void setResultOfExamination(String resultOfExamination) {
         this.resultOfExamination = resultOfExamination;
+    }
+
+    public String getNameAsAadhar() {
+        return nameAsAadhar;
+    }
+
+    public void setNameAsAadhar(String nameAsAadhar) {
+        this.nameAsAadhar = nameAsAadhar;
     }
 }

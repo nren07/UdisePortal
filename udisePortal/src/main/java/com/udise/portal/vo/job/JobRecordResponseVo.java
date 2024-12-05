@@ -12,8 +12,8 @@ public class JobRecordResponseVo {
     private String studentName;
     private String className;
     private String section;
-    private Double studentPen;
-    private Double attendance;
+    private Long studentPen;
+    private Long attendance;
     private Double percentage;
     private JobStatus jobStatus;
 
@@ -41,19 +41,19 @@ public class JobRecordResponseVo {
         this.section = section;
     }
 
-    public Double getStudentPen() {
+    public Long getStudentPen() {
         return studentPen;
     }
 
-    public void setStudentPen(Double studentPen) {
+    public void setStudentPen(Long studentPen) {
         this.studentPen = studentPen;
     }
 
-    public Double getAttendence() {
+    public Long getAttendence() {
         return attendance;
     }
 
-    public void setAttendence(Double attendence) {
+    public void setAttendence(Long attendence) {
         this.attendance = attendence;
     }
 

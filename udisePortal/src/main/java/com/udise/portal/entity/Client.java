@@ -21,6 +21,26 @@ public class Client {
     private String email;
     private String password;
     private Role role;
+    private String udiseCode;
+
+    private long creditPoint;
+
+    public Long getCreditPoint() {
+        return creditPoint;
+    }
+
+    public void setCreditPoint(Long creditPoint) {
+        this.creditPoint = creditPoint;
+    }
+
+
+    public String getUdiseCode() {
+        return udiseCode;
+    }
+
+    public void setUdiseCode(String udiseCode) {
+        this.udiseCode = udiseCode;
+    }
 
     public Long getId() {
         return id;
@@ -69,4 +89,6 @@ public class Client {
     public void setContactPerson(String contactPerson) {
         this.contactPerson = contactPerson;
     }
+
+
 }

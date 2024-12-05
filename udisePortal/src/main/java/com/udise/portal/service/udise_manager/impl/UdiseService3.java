@@ -72,89 +72,104 @@ public class UdiseService3 {
     }
 
     @Async
-    public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
-        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+    public void startChromeService(DockerVo dockerVo, String containerId, List<JobRecord> jobRecordList, Job job,Map<Long,Boolean> liveJobs) throws InterruptedException, IOException {
+        Long jobId=job.getId();
+//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
         int loginTimeOut=vncLoginTimeOut;
-//        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
-        try{
-            WebDriver driver = null; // Declare driver her
-//            job.setJobStatus(JobStatus.IN_PROGRESS);
-            log.info("Job Start");
-            String userid=String.valueOf(job.getAppUser().getId());
-            try {
-                 //Set Chrome options and capabilities
-                ChromeOptions chromeOptions = new ChromeOptions();
-                DesiredCapabilities capabilities = new DesiredCapabilities();
-                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-                driver = new RemoteWebDriver(new URL(url), capabilities);
+        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
+        WebDriver driver = null; // Declare driver her
+        job.setJobStatus(JobStatus.IN_PROGRESS);
+        log.info("Job Start");
+        String userid=String.valueOf(job.getAppUser().getId());
+        try {
+            //Set Chrome options and capabilities
 
-//                driver=new ChromeDriver();
-                log.info("Chrome Start");
-                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+//            ChromeOptions chromeOptions = new ChromeOptions();
+//            DesiredCapabilities capabilities = new DesiredCapabilities();
+//            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+//            driver = new RemoteWebDriver(new URL(url), capabilities);
 
-                driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
-                driver.manage().window().maximize();
+                driver=new ChromeDriver();
+            log.info("Chrome Start");
+            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
 
-                // Create WebDriverWait instance
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
+            driver.manage().window().maximize();
 
-                // Navigate to the UDISE portal login page
-                driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
-                log.info("Site Rendered");
+            // Create WebDriverWait instance
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+
+            // Navigate to the UDISE portal login page
+            driver.get("https://sdms.udiseplus.gov.in/p2/v1/login?state-id=108");
+            log.info("Site Rendered");
 //                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
-                // Wait until the URL or page state changes after the manual click
-                String currentUrl = driver.getCurrentUrl();
-                WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));
-                usernameField.sendKeys("08122604122");
-                WebElement passwordField = driver.findElement(By.id("password-field"));
-                passwordField.sendKeys("Lokesh@888");
+            // Wait until the URL or page state changes after the manual click
+            String currentUrl = driver.getCurrentUrl();
+            WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));
+            usernameField.sendKeys("08122604122");
+            WebElement passwordField = driver.findElement(By.id("password-field"));
+            passwordField.sendKeys("Lokesh@888");
 
-                while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
-                    Thread.sleep(1000);
-                    loginTimeOut--;  // Poll every second
-                    log.info(loginTimeOut);
-                }
-                if(loginTimeOut<0){
-                    return;
-                }
-                System.out.println("after return ");
-                WebElement ele1=wait.until(ExpectedConditions.elementToBeClickable(By.className("clearfix"))); //current academic year
-                ele1.click();
-                log.info("after current academic year");
-                WebElement ele2= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space(text())='Close']"))); //PopUp close
-                ele2.click();
-                log.info("after close ");
-                WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
-                ele3.click();
-                log.info("after Dashboard ");
-                List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
-                log.info("length of rows are : {}",rows.size());
+            while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
+                Thread.sleep(1000);
+                loginTimeOut--;  // Poll every second
+                log.info(loginTimeOut);
+            }
+            if(loginTimeOut<0){
+                return;
+            }
+            System.out.println("after return ");
+            WebElement ele1=wait.until(ExpectedConditions.elementToBeClickable(By.className("clearfix"))); //current academic year
+            ele1.click();
+            log.info("after current academic year");
+            WebElement ele2= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[normalize-space(text())='Close']"))); //PopUp close
+            ele2.click();
 
-                WebElement row1=rows.get(0);
-                List<WebElement> cols = row1.findElements(By.cssSelector("td"));
-                WebElement actionBtn = cols.get(7);
-                WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
-                viewAndManageBtn.click();
-                addStudent(wait,driver,jobId);
-            } catch (MalformedURLException e) {
-                log.error("Invalid hub URL: ", e);
-            } catch (WebDriverException e) {
-                log.error("WebDriver encountered an error", e);
-            } catch (Exception e) {
-                log.error("An unexpected error occurred", e);
+            WebElement udiseCodeElement = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.cssSelector("div.d-flex.flex-row.mb-1 span.form-read-olny")
+                    )
+            );
+            System.out.println("udise code is :"+udiseCodeElement.getText());
+            if(!udiseCodeElement.getText().equals("08122604122")){
+                System.out.println("different school is there");
+                WebElement imageElement = wait.until(
+                        ExpectedConditions.visibilityOfElementLocated(
+                                By.cssSelector("img[src='assets/img/power.png']")
+                        )
+                );
+                imageElement.click();
+                return;
             }
-            finally {
-                // Close the driver safely
-                log.info("in case of return finally block");
-                if (driver != null) {
-                    driver.quit();
-                }
-//                liveJobs.remove(jobId);
-                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
-                dockerManager.stopAndRemoveContainer(containerId,dockerVo);
+            log.info("after close ");
+            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
+            ele3.click();
+            log.info("after Dashboard ");
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            log.info("length of rows are : {}",rows.size());
+
+            WebElement row1=rows.get(0);
+            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+            WebElement actionBtn = cols.get(7);
+            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewAndManageBtn.click();
+            addStudent(wait,driver,jobId);
+        } catch (MalformedURLException e) {
+            log.error("Invalid hub URL: ", e);
+        } catch (WebDriverException e) {
+            log.error("WebDriver encountered an error", e);
+        } catch (Exception e) {
+            log.error("An unexpected error occurred", e);
+        }
+        finally {
+            // Close the driver safely
+            log.info("in case of return finally block");
+            if (driver != null) {
+                driver.quit();
             }
-        }catch (Exception e){
-            e.printStackTrace();
+            liveJobs.remove(jobId);
+            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
+//            dockerManager.stopAndRemoveContainer(containerId,dockerVo);
         }
     }
 
@@ -178,12 +193,45 @@ public class UdiseService3 {
                     WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(
                             By.xpath("//button[normalize-space(.//span)='Add Student']")
                     ));
-                    addButton.click();
-                    fillPersonalDetails(wait, record, driver);
-                    generalProfileUpdate(wait, record, driver);
-                    enrolmentProfileUpdate(wait, record, driver);
-                    facilityProfileUpdate(wait, record, driver);
-                    Thread.sleep(5000);
+//                    addButton.click();
+
+                    //
+                    WebElement search_input = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@placeholder='Search']")));
+                    search_input.clear();
+                    search_input.sendKeys(record.getStudentName());
+                    Thread.sleep(2000);
+
+                    try{
+
+                        List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+                        WebElement entryStatus;
+                        WebElement dob;
+                        WebElement row1;
+                        WebElement profile;
+                        row1=rows.get(0);
+                        List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+                        entryStatus = cols.get(5);
+                        dob=cols.get(4);
+                        profile=cols.get(6);
+
+                        if(entryStatus.getText().contains("Completed")){
+                            continue;
+                        }
+
+                        WebElement gp = profile.findElement(By.xpath("//a[contains(text(), 'GP')]"));
+                        gp.click();
+                        generalProfileUpdate(wait, record, driver);
+                        enrolmentProfileUpdate(wait, record, driver);
+                        facilityProfileUpdate(wait, record, driver);
+                    }catch (Exception e){
+                        log.error(e);
+                        addButton.click();
+                        fillPersonalDetails(wait, record, driver);
+                        generalProfileUpdate(wait, record, driver);
+                        enrolmentProfileUpdate(wait, record, driver);
+                        facilityProfileUpdate(wait, record, driver);
+                        Thread.sleep(5000);
+                    }
                 }catch (Exception e){
                     log.info("error while doing operation in student :{}",record.getStudentName());
                     jobRecordDao.update(record);
@@ -308,11 +356,9 @@ public class UdiseService3 {
             WebElement dropdownContainer = driver.findElement(By.cssSelector(".ng-select-container"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", dropdownContainer);
             Thread.sleep(2000);
-
-            System.out.println("dropdown container value is: "+dropdownContainer.getAttribute("value"));
-            if(dropdownContainer.getAttribute("value").contains("Select")){
+            WebElement selectedValue = dropdownContainer.findElement(By.cssSelector(".ng-value-label"));
+            if(selectedValue.getText().equals("Select")){
                 dropdownContainer.click();
-
                 // Step 3: Wait for the options to become visible
                 wait.until(ExpectedConditions.visibilityOfElementLocated(
                         By.cssSelector(".ng-option"))); // Ensure ng-option is loaded
@@ -321,22 +367,13 @@ public class UdiseService3 {
                 inputField.sendKeys(record.getMotherTongue()); // Replace with the desired text
                 Actions actions = new Actions(driver);
 
-// Scroll through dropdown options until the desired option appears
-                WebElement selectedValue = dropdownContainer.findElement(By.cssSelector(".ng-value-label"));
 
-                System.out.println("Selected Value: " + selectedValue.getText());
                 WebElement dropdownPanel = driver.findElement(By.cssSelector(".ng-dropdown-panel"));
-                System.out.println("Selected Value: " + dropdownPanel.getText());
-                while (true) {
-                    try { // Dynamic text
-                        WebElement desiredOption = dropdownPanel.findElement(By.xpath("//span[normalize-space(text())='" + record.getMotherTongue() + "']"));
-                        desiredOption.click();
-                        break;
-                    } catch (Exception e) {
-                        actions.moveToElement(dropdownPanel).scrollByAmount(0, 50).perform();
-                    }
-                }
+                WebElement desiredOption = dropdownPanel.findElement(By.cssSelector(".ng-star-inserted"));
+                Thread.sleep(1000);
+                desiredOption.click();
             }
+
             WebElement categoryDropDown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='socCatId']")));
 
             Select categorySelect = new Select(categoryDropDown);
@@ -411,6 +448,15 @@ public class UdiseService3 {
             nextBtns.get(0).click();
 
         }catch (Exception e){
+            try{
+                List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                        By.xpath("//button[contains(@style, 'display: inline-block')]")
+                ));
+                System.out.println(buttons.get(0).getText());
+                buttons.get(0).click();
+            }catch (Exception exception){
+                log.error(exception);
+            }
             errorLogManager.logError(record,e, "Context info about this error", "ERROR",
                     this.getClass().getName(), "fillGeneralProfile");
             log.info("Error In General Profile: {}",e.getCause());
@@ -494,6 +540,15 @@ public class UdiseService3 {
             nextBtns.get(1).click();
             log.info("next Btn of ep clicked");
         }catch (Exception e){
+            try{
+                List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(
+                        By.xpath("//button[contains(@style, 'display: inline-block')]")
+                ));
+                System.out.println(buttons.get(0).getText());
+                buttons.get(0).click();
+            }catch (Exception exception){
+                log.error(exception);
+            }
             log.info("Error In Enrolment Profile");
             errorLogManager.logError(record,e, "Context info about this error", "ERROR",
                     this.getClass().getName(), "enrollmentProfileerror");

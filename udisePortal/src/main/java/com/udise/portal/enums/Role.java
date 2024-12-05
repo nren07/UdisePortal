@@ -2,7 +2,8 @@ package com.udise.portal.enums;
 
 public enum Role {
     CLIENT("Client"),
-    USER("User");
+    USER("User"),
+    SUPER_ADMIN("Super_Admin");
 
     private final String displayName;
 

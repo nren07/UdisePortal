@@ -33,6 +33,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -57,7 +58,8 @@ public class UdiseService1 {
     }
 
     @Async
-    public void startChromeService(DockerVo dockerVo, Long jobId, String containerId, List<JobRecord> jobRecordList, Job job) throws InterruptedException, IOException {
+    public void startChromeService(DockerVo dockerVo, String containerId, List<JobRecord> jobRecordList, Job job, Map<Long,Boolean> liveJobs) throws InterruptedException, IOException {
+        Long jobId=job.getId();
         int loginTimeOut=vncLoginTimeOut;
         String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
@@ -134,6 +136,8 @@ public class UdiseService1 {
                                 try{
                                     for(JobRecord record:records){
                                         // Wait for the search input to become clickable
+                                        record.setJobStatus(JobStatus.IN_PROGRESS);
+                                        jobRecordDao.update(record);
                                         WebElement searchInput = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@data-placeholder='Search']")));
                                         DecimalFormat df=new DecimalFormat("0.##########");
                                         searchInput.clear();

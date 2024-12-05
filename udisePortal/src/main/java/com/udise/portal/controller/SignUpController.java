@@ -2,6 +2,8 @@ package com.udise.portal.controller;
 
 import com.udise.portal.service.sign_up.SignUpManager;
 
+import com.udise.portal.vo.admin.SignUpReqVo;
+import com.udise.portal.vo.admin.SignUpResVo;
 import com.udise.portal.vo.client.ClientSignUpReqVo;
 import com.udise.portal.vo.client.ClientSignUpResVo;
 import com.udise.portal.vo.user.UserSignUpReqVo;
@@ -22,7 +24,7 @@ public class SignUpController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @PostMapping("/reg-client")
+    @PostMapping("/client")
     public ResponseEntity<ClientSignUpResVo> registerClient(@RequestBody ClientSignUpReqVo obj) throws Exception {
         ClientSignUpResVo res=signUpManager.registerClient(obj);
         if(res.getId()==null){
@@ -31,7 +33,7 @@ public class SignUpController {
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{schoolId}/reg-user")
+    @PostMapping("/{schoolId}/user")
     public ResponseEntity<UserSignUpResVo> registerUser(@PathVariable Long schoolId,@RequestBody UserSignUpReqVo obj) throws Exception {
         UserSignUpResVo res=signUpManager.registerUser(schoolId,obj);
         if(res.getPass()==null){
@@ -39,4 +41,11 @@ public class SignUpController {
         }
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
+
+    @PostMapping("/admin")
+    public ResponseEntity<SignUpResVo> registerAdmin(@RequestBody SignUpReqVo obj) throws Exception {
+        SignUpResVo res=signUpManager.registerAdmin(obj);
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
+    }
+
 }

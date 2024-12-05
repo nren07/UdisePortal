@@ -7,10 +7,7 @@ import com.udise.portal.enums.Category;
 import com.udise.portal.enums.JobStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,68 +43,119 @@ public class Type3 {
                 Row currentRow = rows.next();
                 JobRecord record = new JobRecord();
                 if (headerMap.containsKey("student name")) {
-                    System.out.println(headerMap.get("student name"));
-                    if(currentRow.getCell(headerMap.get("student name")).getStringCellValue().equals("")){
-//                            messagingTemplate.convertAndSend("/topic/"+job.getAppUser().getId(), new SocketResponseVo("Upload Alert", ""));
-                        log.info("Uploaded Job Name field Empty");
-                        break;
-                    }
-                    record.setStudentName(currentRow.getCell(headerMap.get("student name")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("student name"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setStudentName(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("section")) {
-                    if(currentRow.getCell(headerMap.get("section")).getStringCellValue()==""){
-                        log.info("Uploaded Job section field Empty");
-                        break;
-                    }
-                    record.setSection(currentRow.getCell(headerMap.get("section")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("section"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setSection(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("class")) {
-                    if(currentRow.getCell(headerMap.get("class")).getStringCellValue()==""){
-                        log.info("Uploaded Job class field Empty");
-                        break;
-                    }
-                    record.setClassName(currentRow.getCell(headerMap.get("class")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("class"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setClassName(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("student pen")) {
-                    record.setStudentPen(currentRow.getCell(headerMap.get("student pen")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("student pen"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        try{
+                            record.setStudentPen(Double.parseDouble(cell.getStringCellValue()));
+                        }catch (Exception e){
+                            System.out.println("Student pen Error "+record.getStudentName());
+                            log.error("student pen is not valid");
+                            continue;
+                        }
+                    }else continue;
                 }
                 if (headerMap.containsKey("4.2.8no. of days student attended school (in the previous academic year)")) {
-                    record.setAttendance(currentRow.getCell(headerMap.get("4.2.8no. of days student attended school (in the previous academic year)")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("4.2.8no. of days student attended school (in the previous academic year)"));
+                    if(cell!=null && cell.getCellType()== CellType.NUMERIC){
+                        record.setAttendance(cell.getNumericCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("4.2.7(b) in the previous class studied – marks obtained (in percentage)")) {
-                    record.setPercentage(currentRow.getCell(headerMap.get("4.2.7(b) in the previous class studied – marks obtained (in percentage)")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("4.2.7(b) in the previous class studied – marks obtained (in percentage)"));
+                    if(cell!=null && cell.getCellType()== CellType.NUMERIC){
+                        record.setPercentage(cell.getNumericCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("gender")) {
-                    record.setGender(currentRow.getCell(headerMap.get("gender")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("gender"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setGender(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("date of birth")) {
-                    System.out.println(currentRow.getCell(headerMap.get("date of birth")).getClass().getName());
-                    record.setDob(currentRow.getCell(headerMap.get("date of birth")).getDateCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("date of birth"));
+                    if(cell!=null && cell.getCellType()== CellType.NUMERIC){
+                        record.setDob(cell.getDateCellValue());
+                    }else continue;
+
                 }
                 if (headerMap.containsKey("student state code")) {
-                    record.setStateCode(currentRow.getCell(headerMap.get("student state code")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("student state code"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        try{
+                            record.setStateCode(Double.parseDouble(cell.getStringCellValue()));
+                        }catch (Exception e){
+                            System.out.println("State code error for"+record.getStudentName());
+                            log.error(e);
+                        }
+                    }
                 }
                 if (headerMap.containsKey("mother's name")) {
-                    record.setMotherName(currentRow.getCell(headerMap.get("mother's name")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("mother's name"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        record.setMotherName(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("father's name")) {
-                    record.setFatherName(currentRow.getCell(headerMap.get("father's name")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("father's name"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        record.setFatherName(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("aadhar number")) {
-                    record.setAadharNumber(currentRow.getCell(headerMap.get("aadhar number")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("aadhar number"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        record.setAadharNumber(cell.getStringCellValue());
+                    }else continue;
+                }
+                if (headerMap.containsKey("name as per aadhar")) {
+                    Cell cell=currentRow.getCell(headerMap.get("name as per aadhar"));
+                    if(cell!=null && cell.getCellType()==CellType.STRING){
+                        record.setNameAsAadhar(cell.getStringCellValue());
+                    }
                 }
 
                 if (headerMap.containsKey("date of admission")) {
-                    record.setDateOfAdmission(currentRow.getCell(headerMap.get("date of admission")).getDateCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("date of admission"));
+                    if(cell!=null && cell.getCellType()== CellType.NUMERIC){
+                        record.setDateOfAdmission(cell.getDateCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("address ")) {
-                    record.setAddress(currentRow.getCell(headerMap.get("address ")).getStringCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("address"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setAddress(cell.getStringCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("pin code")) {
-                    record.setPinCode(currentRow.getCell(headerMap.get("pin code")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("pin code"));
+                    if(cell!=null && cell.getCellType()== CellType.NUMERIC){
+                        record.setPinCode(cell.getNumericCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("father's mobile no")) {
-                    record.setFatherMoNumber(currentRow.getCell(headerMap.get("father's mobile no")).getNumericCellValue());
+                    Cell cell=currentRow.getCell(headerMap.get("father's mobile no"));
+                    if(cell!=null && cell.getCellType()== CellType.STRING){
+                        record.setFatherMoNumber(cell.getNumericCellValue());
+                    }else continue;
                 }
                 if (headerMap.containsKey("mother tongue of the student")) {
                     record.setMotherTongue(currentRow.getCell(headerMap.get("mother tongue of the student")).getStringCellValue());

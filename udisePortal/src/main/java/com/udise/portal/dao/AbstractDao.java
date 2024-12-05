@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
+import com.udise.portal.entity.AppUser;
+import com.udise.portal.enums.Role;
 import io.micrometer.common.util.StringUtils;
 import org.hibernate.Session;
 import org.openqa.selenium.InvalidArgumentException;
@@ -25,17 +27,25 @@ public interface AbstractDao {
 
 	<T> T getById(Class<T> entityClass, Serializable id);
 
-	Session getCurrentSession();
-
 	void flush();
 
 	void commit();
 
 	void clear();
 
-
-	Connection getConnection();
-
 	void setSessionReadOnly();
+
+//	RoleName getLoggedInUserRoleName();
+
+//	AppUser getLoggedInUser();
+
+	String getIpAddress();
+
+	// Module getLoggedInUserModule();
+
+	Role getLoggedInUserRole();
+
+	Session getCurrentSession();
+	Connection getConnection();
 
 }

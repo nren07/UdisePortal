@@ -15,7 +15,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UdiseManagerImpl implements UdiseManager {
@@ -35,36 +37,39 @@ public class UdiseManagerImpl implements UdiseManager {
     private UdiseService2 udiseService2; //Add new students
     @Autowired
     private UdiseService3 udiseService3; // update profiles
+    private Map<Long,Boolean> liveJobs;
 
     private static final Logger log = LogManager.getLogger(UdiseManagerImpl.class);
+
+    public UdiseManagerImpl(){
+        this.liveJobs=new HashMap<>();
+    }
 
     @Override
     public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException {
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
         if(jobRecordList.size()>0){
-            DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
-//            DockerVo dockerVo=new DockerVo();
-//            dockerVo.setVncPort(1000);
-//            dockerVo.setHostPort(2000);
-//            dockerVo.setContainerName("1234");
-//            dockerVo.setContainerId("1234");
+            liveJobs.put(jobId,true);
+//            DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
+            DockerVo dockerVo=new DockerVo();
+            dockerVo.setVncPort(1000);
+            dockerVo.setHostPort(2000);
+            dockerVo.setContainerName("1234");
+            dockerVo.setContainerId("1234");
 //            if(dockerVo==null){
 //                return new JobStartResponseVo(null,"internal server error");
 //            }
-            String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
-//            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
-            dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo);
+//            String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
+            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
+//            dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo);
             taskExecutor.execute(() -> {
                 try {
                     if(job.getJobType()== JobType.SERVICE1){
-                        log.info("JobType SERVICE1 Started");
-                        udiseService1.startChromeService(dockerVo, jobId, dockerVo.getContainerId(), jobRecordList,job);
+                        udiseService1.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else if(job.getJobType()== JobType.SERVICE2){
-                        log.info("JobType SERVICE2 Started");
-                        udiseService2.startChromeService(dockerVo, jobId, dockerVo.getContainerId(), jobRecordList,job);
+                        udiseService2.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else{
-                        log.info("JobType SERVICE3 Started");
-                        udiseService3.startChromeService(dockerVo, jobId, dockerVo.getContainerId(), jobRecordList,job);
+                        udiseService3.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }
                 } catch (InterruptedException | IOException e) {
                     throw new RuntimeException(e);

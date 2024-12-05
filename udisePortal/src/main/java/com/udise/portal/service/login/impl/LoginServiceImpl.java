@@ -2,13 +2,16 @@ package com.udise.portal.service.login.impl;
 
 import com.udise.portal.dao.AppUserDao;
 import com.udise.portal.dao.ClientDao;
+import com.udise.portal.dao.SuperAdminDao;
 import com.udise.portal.entity.AppUser;
 import com.udise.portal.entity.Client;
+import com.udise.portal.entity.SuperAdmin;
 import com.udise.portal.enums.Role;
 import com.udise.portal.service.login.LoginManager;
 import com.udise.portal.vo.client.ClientLoginReqVo;
 import com.udise.portal.vo.client.ClientLoginResVo;
 
+import com.udise.portal.vo.admin.SuperLoginResVo;
 import com.udise.portal.vo.user.UserLoginReqVo;
 import com.udise.portal.vo.user.UserLoginResVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class LoginServiceImpl implements LoginManager,UserDetailsService {
 
     @Autowired
     private ClientDao clientDao;
+
+    @Autowired
+    private SuperAdminDao superAdminDao;
 
     @Override
     public ClientLoginResVo clientLogin(ClientLoginReqVo obj) {
@@ -122,12 +128,36 @@ public class LoginServiceImpl implements LoginManager,UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser user = appUserDao.findByEmail(username);
         Client client=clientDao.findByEmail(username);
-        if (user == null && client==null){
+        SuperAdmin admin=superAdminDao.findByEmail(username);
+        if (user == null && client==null && admin==null){
             throw new UsernameNotFoundException("User not found");
         }else if(user!=null){
             return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
-        }else{
+        }else if(client!=null){
             return new org.springframework.security.core.userdetails.User(client.getEmail(), client.getPassword(), new ArrayList<>());
+        }else{
+            return new org.springframework.security.core.userdetails.User(admin.getUsername(), admin.getPassword(),  new ArrayList<>());
+        }
+    }
+
+    @Override
+    public SuperLoginResVo superLogin(UserLoginReqVo obj) {
+        SuperAdmin user = superAdminDao.findByEmail(obj.getUserName());
+        if (user != null) {
+            if (user.getPassword().equals(obj.getPassword())) {
+                String token = generateToken(user.getUsername()); // Implement JWT token generation
+                SuperLoginResVo response = new SuperLoginResVo();
+                response.setId(user.getId());
+                response.setAuthtoken(token);
+                response.setMsg("Login SuccessFull");
+                response.setName(user.getFullName());
+                response.setRole(Role.SUPER_ADMIN);
+                return response;
+            } else {
+                throw new UsernameNotFoundException("Password Doesn't Match");
+            }
+        } else {
+            throw new UsernameNotFoundException("Password Doesn't Match");
         }
     }
 }
