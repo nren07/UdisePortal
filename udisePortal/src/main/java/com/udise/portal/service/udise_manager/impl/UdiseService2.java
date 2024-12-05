@@ -60,8 +60,6 @@ public class UdiseService2 {
     @Value("${vnc-login-timeout:#{70}}")
     private int vncLoginTimeOut;
 
-    private Map<Long,Boolean> liveJobs;
-
     @Autowired
     private ErrorLogManager errorLogManager;
 
@@ -84,14 +82,14 @@ public class UdiseService2 {
             String userid=String.valueOf(job.getAppUser().getId());
             try {
                 // Set Chrome options and capabilities
-//                ChromeOptions chromeOptions = new ChromeOptions();
-//                DesiredCapabilities capabilities = new DesiredCapabilities();
-//                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-//                driver = new RemoteWebDriver(new URL(url), capabilities);
+                ChromeOptions chromeOptions = new ChromeOptions();
+                DesiredCapabilities capabilities = new DesiredCapabilities();
+                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+                driver = new RemoteWebDriver(new URL(url), capabilities);
 
-                driver=new ChromeDriver();
+//                driver=new ChromeDriver();
                 log.info("Chrome Start");
-//                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+
 
                 driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
                 driver.manage().window().maximize();
@@ -106,9 +104,10 @@ public class UdiseService2 {
                 // Wait until the URL or page state changes after the manual click
                 String currentUrl = driver.getCurrentUrl();
                 WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));
-                usernameField.sendKeys("08122604122");
+//                usernameField.sendKeys("08122604122");
                 WebElement passwordField = driver.findElement(By.id("password-field"));
-                passwordField.sendKeys("Lokesh@888");
+//                passwordField.sendKeys("Lokesh@888");
+                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
 
                 while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
                     Thread.sleep(1000);
@@ -152,7 +151,7 @@ public class UdiseService2 {
                 }
                 liveJobs.remove(jobId);
                 messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
-//                dockerManager.stopAndRemoveContainer(containerId,dockerVo);
+                dockerManager.stopAndRemoveContainer(containerId,dockerVo);
             }
         }catch (Exception e){
             e.printStackTrace();

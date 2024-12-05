@@ -74,9 +74,9 @@ public class UdiseService3 {
     @Async
     public void startChromeService(DockerVo dockerVo, String containerId, List<JobRecord> jobRecordList, Job job,Map<Long,Boolean> liveJobs) throws InterruptedException, IOException {
         Long jobId=job.getId();
-//        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
+        String url = String.format("http://%s:%d/wd/hub", dockerVo.getContainerName(), 4444); //for prod
         int loginTimeOut=vncLoginTimeOut;
-        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
+//        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         WebDriver driver = null; // Declare driver her
         job.setJobStatus(JobStatus.IN_PROGRESS);
         log.info("Job Start");
@@ -84,14 +84,14 @@ public class UdiseService3 {
         try {
             //Set Chrome options and capabilities
 
-//            ChromeOptions chromeOptions = new ChromeOptions();
-//            DesiredCapabilities capabilities = new DesiredCapabilities();
-//            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-//            driver = new RemoteWebDriver(new URL(url), capabilities);
+            ChromeOptions chromeOptions = new ChromeOptions();
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+            driver = new RemoteWebDriver(new URL(url), capabilities);
 
-                driver=new ChromeDriver();
+//                driver=new ChromeDriver();
             log.info("Chrome Start");
-            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+
 
             driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
             driver.manage().window().maximize();
@@ -106,9 +106,10 @@ public class UdiseService3 {
             // Wait until the URL or page state changes after the manual click
             String currentUrl = driver.getCurrentUrl();
             WebElement usernameField = wait.until(ExpectedConditions.elementToBeClickable(By.id("username-field")));
-            usernameField.sendKeys("08122604122");
+//            usernameField.sendKeys("08122604122");
             WebElement passwordField = driver.findElement(By.id("password-field"));
-            passwordField.sendKeys("Lokesh@888");
+//            passwordField.sendKeys("Lokesh@888");
+            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
 
             while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
                 Thread.sleep(1000);
@@ -169,7 +170,7 @@ public class UdiseService3 {
             }
             liveJobs.remove(jobId);
             messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
-//            dockerManager.stopAndRemoveContainer(containerId,dockerVo);
+            dockerManager.stopAndRemoveContainer(containerId,dockerVo);
         }
     }
 

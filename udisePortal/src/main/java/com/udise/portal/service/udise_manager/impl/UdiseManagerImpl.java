@@ -50,18 +50,18 @@ public class UdiseManagerImpl implements UdiseManager {
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
         if(jobRecordList.size()>0){
             liveJobs.put(jobId,true);
-//            DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
-            DockerVo dockerVo=new DockerVo();
-            dockerVo.setVncPort(1000);
-            dockerVo.setHostPort(2000);
-            dockerVo.setContainerName("1234");
-            dockerVo.setContainerId("1234");
-//            if(dockerVo==null){
-//                return new JobStartResponseVo(null,"internal server error");
-//            }
-//            String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
-            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
-//            dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo);
+            DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
+//            DockerVo dockerVo=new DockerVo();
+//            dockerVo.setVncPort(1000);
+//            dockerVo.setHostPort(2000);
+//            dockerVo.setContainerName("1234");
+//            dockerVo.setContainerId("1234");
+            if(dockerVo==null){
+                return new JobStartResponseVo(null,"internal server error");
+            }
+            String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
+            dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo); // for prod
+            //            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
             taskExecutor.execute(() -> {
                 try {
                     if(job.getJobType()== JobType.SERVICE1){
