@@ -3,7 +3,8 @@ package com.udise.portal.enums;
 public enum JobStatus {
     PENDING("Pending"),
     COMPLETED("Completed"),
-    IN_PROGRESS("InProgress");
+    IN_PROGRESS("InProgress"),
+    ALREADY_COMPLETED("Already_Completed");
 
 
     private final String displayName;

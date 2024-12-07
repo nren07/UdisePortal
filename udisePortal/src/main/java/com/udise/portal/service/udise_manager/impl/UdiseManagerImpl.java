@@ -47,6 +47,7 @@ public class UdiseManagerImpl implements UdiseManager {
 
     @Override
     public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException {
+        if(liveJobs.containsKey(jobId)) return new JobStartResponseVo(null,"Job Already in Progress");
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
         if(jobRecordList.size()>0){
             liveJobs.put(jobId,true);
