@@ -25,7 +25,6 @@ public class SuperAdminDaoImpl extends AbstractDaoImpl implements SuperAdminDao 
             query.setParameter("username", username);
             return query.getSingleResult();
         }catch (Exception e){
-            e.printStackTrace();
             return null;
         }
     }

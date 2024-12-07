@@ -20,7 +20,7 @@ public class ErrorLogManagerImpl implements ErrorLogManager {
     @Autowired
     private ErrorLogDao errorLogDao;
 
-    public void logError(JobRecord jobRecord, Exception exception, String contextInfo, String severity, String sourceClass, String sourceMethod) {
+    public void logError(JobRecord jobRecord, Throwable exception, String contextInfo, String severity, String sourceClass, String sourceMethod) {
         ErrorLog errorLog = new ErrorLog();
         errorLog.setJobRecord(jobRecord);
         errorLog.setTimestamp(LocalDateTime.now());
@@ -33,7 +33,7 @@ public class ErrorLogManagerImpl implements ErrorLogManager {
         errorLogDao.save(errorLog);
     }
 
-    private String getStackTraceAsString(Exception exception) {
+    private String getStackTraceAsString(Throwable exception) {
         StringWriter stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));
         return stringWriter.toString();
