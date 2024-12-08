@@ -119,7 +119,7 @@ public class UdiseService3 {
             if(loginTimeOut<0){
                 return;
             }
-            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
+//            messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
             System.out.println("after return ");
             WebElement ele1=wait.until(ExpectedConditions.elementToBeClickable(By.className("clearfix"))); //current academic year
             ele1.click();
