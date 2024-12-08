@@ -17,9 +17,9 @@ const Dashboard = () => {
   const token = useSelector(selectToken);
   const expirationTime = useSelector(selectTokenExpiration);
 
-  useEffect(() => {
-    if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  }, [expirationTime, navigate]);
+  // useEffect(() => {
+  //   if (Date.now() >= expirationTime || !token || !userId) navigate("/");
+  // }, [expirationTime, navigate]);
 
   const handleButtonClick = (timeframe) => {
     setSelectedTimeframe(timeframe);

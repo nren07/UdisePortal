@@ -1,69 +1,176 @@
-<!DOCTYPE html>
-<html lang="en">
+<div
+  aria-labelledby="swal2-title"
+  aria-describedby="swal2-html-container"
+  class="swal2-popup swal2-modal swal2-icon-error swal2-show"
+  tabindex="-1"
+  role="dialog"
+  aria-live="assertive"
+  aria-modal="true"
+  style="display: grid"
+>
+  <button
+    type="button"
+    class="swal2-close"
+    aria-label="Close this dialog"
+    style="display: none"
+  >
+    ×
+  </button>
+  <ul class="swal2-progress-steps" style="display: none"></ul>
+  <div class="swal2-icon swal2-error swal2-icon-show" style="display: flex">
+    <span class="swal2-x-mark">
+      <span class="swal2-x-mark-line-left"></span>
+      <span class="swal2-x-mark-line-right"></span>
+    </span>
+  </div>
+  <img class="swal2-image" style="display: none" />
+  <h2 class="swal2-title" id="swal2-title" style="display: block">
+    Some mandatory fields value are incorrect or missing
+  </h2>
+  <div
+    class="swal2-html-container"
+    id="swal2-html-container"
+    style="display: none"
+  ></div>
+  <input class="swal2-input" style="display: none" /><input
+    type="file"
+    class="swal2-file"
+    style="display: none"
+  />
+  <div class="swal2-range" style="display: none">
+    <input type="range" /><output></output>
+  </div>
+  <select class="swal2-select" style="display: none"></select>
+  <div class="swal2-radio" style="display: none"></div>
+  <label for="swal2-checkbox" class="swal2-checkbox" style="display: none"
+    ><input type="checkbox" /><span class="swal2-label"></span></label
+  ><textarea class="swal2-textarea" style="display: none"></textarea>
+  <div
+    class="swal2-validation-message"
+    id="swal2-validation-message"
+    style="display: none"
+  ></div>
+  <div class="swal2-actions" style="display: flex">
+    <div class="swal2-loader"></div>
+    <button
+      type="button"
+      class="swal2-confirm swal2-styled"
+      aria-label=""
+      style="display: inline-block"
+    >
+      OK</button
+    ><button
+      type="button"
+      class="swal2-deny swal2-styled"
+      aria-label=""
+      style="display: none"
+    >
+      No</button
+    ><button
+      type="button"
+      class="swal2-cancel swal2-styled"
+      aria-label=""
+      style="display: none"
+    >
+      Cancel
+    </button>
+  </div>
+  <div class="swal2-footer" style="display: none"></div>
+  <div class="swal2-timer-progress-bar-container">
+    <div class="swal2-timer-progress-bar" style="display: none"></div>
+  </div>
+</div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    //before click on select option
-    <div class="ng-select-container">
-        <div class="ng-value-container">
-            <div class="ng-placeholder"></div><!----><!---->
-            <div role="combobox" aria-haspopup="listbox" class="ng-input" aria-expanded="false">
-                <input aria-autocomplete="list" type="text" autocorrect="off" autocapitalize="off"
-                    autocomplete="aadcaa3f520c">
-            </div>
-        </div><!----><!----><span class="ng-arrow-wrapper"><span class="ng-arrow"></span></span>
-    </div>
-
-    // after click on select option
-    <div class="ng-select-container">
-        <div class="ng-value-container">
-            <div class="ng-placeholder"></div><!----><!---->
-            <div role="combobox" aria-haspopup="listbox" class="ng-input" aria-expanded="true" aria-owns="aadcaa3f520c">
-                <input aria-autocomplete="list" type="text" autocorrect="off" autocapitalize="off"
-                    autocomplete="aadcaa3f520c" aria-activedescendant="aadcaa3f520c-1" aria-controls="aadcaa3f520c">
-            </div>
-        </div><!----><!----><span class="ng-arrow-wrapper"><span class="ng-arrow"></span></span>
-    </div>
-
-    //language box opened after click option
-    <div class="ng-dropdown-panel-items scroll-host">
-        <div class="total-padding" style="height: 9693px;"></div>
-        <div class="scrollable-content" style="transform: translateY(0px);">
-            <div class="ng-option ng-option-disabled ng-star-inserted" role="option" aria-selected="false"
-                id="aadcaa3f520c-0"><!----><span class="ng-option-label ng-star-inserted">Select</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-1"><!----><span
-                    class="ng-option-label ng-star-inserted"> 1-Assamese - Assamese</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-2"><!----><span
-                    class="ng-option-label ng-star-inserted"> 2-Assamese - Others</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-3"><!----><span
-                    class="ng-option-label ng-star-inserted"> 3-Bengali - Bengali</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-4"><!----><span
-                    class="ng-option-label ng-star-inserted"> 4-Bengali - Chakma</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-5"><!----><span
-                    class="ng-option-label ng-star-inserted"> 5-Bengali - Haijong/Hajong</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-6"><!----><span
-                    class="ng-option-label ng-star-inserted"> 6-Bengali - Rajbangs</span><!----></div>
-            <div class="ng-option ng-star-inserted ng-option-marked" role="option" aria-selected="false"
-                id="aadcaa3f520c-7"><!----><span class="ng-option-label ng-star-inserted"> 7-Bengali -
-                    Others</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-8"><!----><span
-                    class="ng-option-label ng-star-inserted"> 8-Bodo - Bodo</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-9"><!----><span
-                    class="ng-option-label ng-star-inserted"> 9-Bodo - Kachari</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-10">
-                <!----><span class="ng-option-label ng-star-inserted"> 10-Bodo - Mech/Mechhia</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-11">
-                <!----><span class="ng-option-label ng-star-inserted"> 11-Bodo - Others</span><!----></div>
-            <div class="ng-option ng-star-inserted" role="option" aria-selected="false" id="aadcaa3f520c-12">
-                <!----><span class="ng-option-label ng-star-inserted"> 12-DOGRI - Dogri</span><!----></div>
-            <!----><!----><!----><!----><!----><!---->
-        </div>
-    </div>
-</body>
-
-</html>
+<div
+  aria-labelledby="swal2-title"
+  aria-describedby="swal2-html-container"
+  class="swal2-popup swal2-modal swal2-icon-success swal2-show"
+  tabindex="-1"
+  role="dialog"
+  aria-live="assertive"
+  aria-modal="true"
+  style="display: grid"
+>
+  <button
+    type="button"
+    class="swal2-close"
+    aria-label="Close this dialog"
+    style="display: none"
+  >
+    ×
+  </button>
+  <ul class="swal2-progress-steps" style="display: none"></ul>
+  <div class="swal2-icon swal2-success swal2-icon-show" style="display: flex">
+    <div
+      class="swal2-success-circular-line-left"
+      style="background-color: rgb(255, 255, 255)"
+    ></div>
+    <span class="swal2-success-line-tip"></span>
+    <span class="swal2-success-line-long"></span>
+    <div class="swal2-success-ring"></div>
+    <div
+      class="swal2-success-fix"
+      style="background-color: rgb(255, 255, 255)"
+    ></div>
+    <div
+      class="swal2-success-circular-line-right"
+      style="background-color: rgb(255, 255, 255)"
+    ></div>
+  </div>
+  <img class="swal2-image" style="display: none" />
+  <h2 class="swal2-title" id="swal2-title" style="display: block">
+    General data updated successfully.
+  </h2>
+  <div
+    class="swal2-html-container"
+    id="swal2-html-container"
+    style="display: none"
+  ></div>
+  <input class="swal2-input" style="display: none" /><input
+    type="file"
+    class="swal2-file"
+    style="display: none"
+  />
+  <div class="swal2-range" style="display: none">
+    <input type="range" /><output></output>
+  </div>
+  <select class="swal2-select" style="display: none"></select>
+  <div class="swal2-radio" style="display: none"></div>
+  <label for="swal2-checkbox" class="swal2-checkbox" style="display: none"
+    ><input type="checkbox" /><span class="swal2-label"></span></label
+  ><textarea class="swal2-textarea" style="display: none"></textarea>
+  <div
+    class="swal2-validation-message"
+    id="swal2-validation-message"
+    style="display: none"
+  ></div>
+  <div class="swal2-actions" style="display: flex">
+    <div class="swal2-loader"></div>
+    <button
+      type="button"
+      class="swal2-confirm swal2-styled swal2-default-outline"
+      aria-label=""
+      style="display: inline-block; background-color: rgb(234, 108, 117)"
+    >
+      Close</button
+    ><button
+      type="button"
+      class="swal2-deny swal2-styled"
+      aria-label=""
+      style="display: none"
+    >
+      No</button
+    ><button
+      type="button"
+      class="swal2-cancel swal2-styled swal2-default-outline"
+      aria-label=""
+      style="display: none; background-color: rgb(32, 100, 204)"
+    >
+      Cancel
+    </button>
+  </div>
+  <div class="swal2-footer" style="display: none"></div>
+  <div class="swal2-timer-progress-bar-container">
+    <div class="swal2-timer-progress-bar" style="display: none"></div>
+  </div>
+</div>

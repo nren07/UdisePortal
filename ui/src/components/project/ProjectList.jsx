@@ -16,9 +16,9 @@ export default function ProjectList() {
   useEffect(() => {
     if (Date.now() >= expirationTime || !token || !userId) navigate("/");
   }, [expirationTime, navigate]);
-  useEffect(() => {
-     userId??navigate("/");
-  }, [userId, navigate]);
+  // useEffect(() => {
+  //    userId??navigate("/");
+  // }, [userId, navigate]);
 
   // Fetch project list
   const fetchProjectList = async () => {

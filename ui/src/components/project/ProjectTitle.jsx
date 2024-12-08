@@ -25,7 +25,7 @@ function ProjectTitle() {
   const [jobRecordData, setJobRecordData] = useState([]);
   const [showIframe, setShowIframe] = useState(false); // Control iframe visibility
   const [vncPort, setVncPort] = useState(null);
-  const [counter, setCounter] = useState(500);
+  const [counter, setCounter] = useState(60);
   const token = useSelector(selectToken);
   const userId = useSelector(selectUserId);
   const role = useSelector(selectRole);
@@ -38,20 +38,20 @@ function ProjectTitle() {
 
   useEffect(() => {
     if (counter > 0 && showIframe) {
-      const timer = setInterval(() => {
-        setCounter((prevCounter) => prevCounter - 1);
-      }, 1000);
+      // const timer = setInterval(() => {
+      //   setCounter((prevCounter) => prevCounter - 1);
+      // }, 1000);
 
-      // Clear the interval when component unmounts or counter reaches 0
-      return () => clearInterval(timer);
+      // // Clear the interval when component unmounts or counter reaches 0
+      // return () => clearInterval(timer);
     }else if(counter==0){
       setShowIframe(false);
     }
   }, [counter,showIframe]);
 
-  useEffect(() => {
-    if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  }, [navigate]);
+  // useEffect(() => {
+  //   if (Date.now() >= expirationTime || !token || !userId) navigate("/");
+  // }, [navigate]);
 
   // Function to handle job start
   const handleStartJob = () => {
@@ -537,7 +537,7 @@ export default ProjectTitle;
 //                 Close
 //               </button>
 //               <iframe
-//                 src={`http://localhost:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
+//                 src={`http://udise.pytosoft.com:${vncPort}/?autoconnect=1&resize=scale&password=secret`}
 //                 style={{ width: "100%", height: "500px", border: "none" }}
 //                 title="Job Iframe"
 //               ></iframe>
