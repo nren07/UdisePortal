@@ -4,7 +4,8 @@ public enum JobStatus {
     PENDING("Pending"),
     COMPLETED("Completed"),
     IN_PROGRESS("InProgress"),
-    ALREADY_COMPLETED("Already_Completed");
+    ALREADY_COMPLETED("Already_Completed"),
+    NOT_FOUND("Not_Found");
 
 
     private final String displayName;
