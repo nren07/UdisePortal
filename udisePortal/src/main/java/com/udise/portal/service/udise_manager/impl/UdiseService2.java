@@ -171,25 +171,41 @@ public class UdiseService2 {
                 classSelect.selectByVisibleText(record.getClassName());
                 WebElement sectionDropdown = sectionSearchContainer.findElement(By.cssSelector("select.form-select.w150"));
                 Select sectionSelect = new Select(sectionDropdown);
-
+                Thread.sleep(100);
                 sectionSelect.selectByVisibleText(record.getSection());
                 WebElement search_input = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@placeholder='Search']")));
                 search_input.clear();
                 if(record.getStudentPen()!=null){
                     String pen=String.valueOf(record.getStudentPen());
-                    for(int i=0;i<pen.length();i++) search_input.sendKeys(pen.substring(i,i+1));
+                    for(int i=0;i<pen.length();i++) {
+                        Thread.sleep(10);
+                        search_input.sendKeys(pen.substring(i,i+1));
+                    }
                 }else{
                     String nameOfStudent=record.getStudentName();
-                    for(int i=0;i<nameOfStudent.length();i++) search_input.sendKeys(nameOfStudent.substring(i,i+1));
+                    for(int i=0;i<nameOfStudent.length();i++) {
+                        Thread.sleep(100);
+                        search_input.sendKeys(nameOfStudent.substring(i,i+1));
+                    }
                 }
 
                 List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
                 WebElement row1=rows.get(0);
                 List<WebElement> cols = row1.findElements(By.cssSelector("td"));
+                if(cols.size()==1){
+                    record.setJobStatus(JobStatus.NOT_FOUND);
+                    jobRecordDao.update(record);
+                    continue;
+                }
                 WebElement name=cols.get(2);
                 WebElement actionBtn = cols.get(5);
                 WebElement dob = cols.get(4);
-                if (!name.getText().equalsIgnoreCase(record.getStudentName()) || !dob.getText().equals(dateFormat.format(record.getDob()))) continue;
+                System.out.println(name.getText());
+                System.out.println(record.getStudentName());
+                System.out.println(dob.getText());
+                //System.out.println(dateFormat.format(record.getDob()));
+
+                if (!name.getText().equalsIgnoreCase(record.getStudentName())) continue;
                 if(actionBtn.getText().contains("Completed")){
                     record.setJobStatus(JobStatus.ALREADY_COMPLETED);
                     jobRecordDao.update(record);
@@ -466,11 +482,9 @@ public class UdiseService2 {
 
         if(record.isSportsChamp()){
             WebElement olympdsNlcRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='1' and @formcontrolname='olympdsNlc']")));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", olympdsNlcRadioBtn);
             olympdsNlcRadioBtn.click();
         }else{
             WebElement olympdsNlcRadioBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@type='radio' and @value='2' and @formcontrolname='olympdsNlc']")));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", olympdsNlcRadioBtn);
             olympdsNlcRadioBtn.click();
         }
 
@@ -522,12 +536,14 @@ public class UdiseService2 {
 
         WebElement heightInCm = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@formcontrolname='heightInCm']")));
         if(heightInCm.getAttribute("value").isBlank()){
-            heightInCm.sendKeys(df.format(record.getHeight()));
+            if(record.getHeight()!=null) heightInCm.sendKeys(df.format(record.getHeight()));
+            else throw new RuntimeException("Height value is not present");
         }
 
         WebElement weightInKg = wait.until(ExpectedConditions.elementToBeClickable(By.xpath( "//input[@formcontrolname='weightInKg']")));
         if(weightInKg.getAttribute("value").isBlank()){
-            weightInKg.sendKeys(df.format(record.getWeight()));
+            if(record.getHeight()!=null) weightInKg.sendKeys(df.format(record.getWeight()));
+            else throw new RuntimeException("Weight value is not present");
         }
 
         WebElement distanceDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='distanceFrmSchool']")));
