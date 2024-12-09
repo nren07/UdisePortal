@@ -498,9 +498,38 @@ public class UdiseAddStudent {
         Select mediumOfInstructionSelect = new Select(mediumOfInstructionDropDown);
         mediumOfInstructionSelect.selectByVisibleText("19-English");
 
+        WebElement academicStreamDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='academicStream']")));
+        Select academicStreamSelect = new Select(academicStreamDropdown);
+        String academicStreamSelectedValue = academicStreamSelect.getFirstSelectedOption().getAttribute("value"); // or getText() for visible text
+
+        if(academicStreamSelectedValue.isBlank()){
+            if(record.getAcademicStream()!=null){
+                if(record.getAcademicStream().toLowerCase().equals("arts")){
+                    academicStreamSelect.selectByValue("1");
+                }else if(record.getAcademicStream().toLowerCase().equals("science")){
+                    academicStreamSelect.selectByValue("2");
+                }else academicStreamSelect.selectByValue("3");
+                WebElement subjectGroupDropDown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ng-multiselect-dropdown[@formcontrolname='subjectGroup']")));
+                WebElement searchInput = subjectGroupDropDown.findElement(By.xpath(".//div[@class='multiselect-dropdown']//input[@aria-label='multiselect-search']"));
+
+                if(record.getSubjectGroup()!=null){
+                    String[] subjects =record.getSubjectGroup().split(",");
+                    for(String subject:subjects){
+                        searchInput.clear();
+                        searchInput.sendKeys(subject);
+                        WebElement inputToSelect = subjectGroupDropDown.findElement(By.xpath(".//div[@class='dropdown-list']//input"));
+                        inputToSelect.click();
+                    }
+
+                }else throw new RuntimeException("SubjectGroup is not present in your job");
+            }
+
+        }
+
         WebElement languageGroupDropDown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='languageGroup']")));
         Select languageGroupSelect = new Select(languageGroupDropDown);
         languageGroupSelect.selectByVisibleText("English_Hindi");
+
         List<WebElement> saveButtons = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//button[./span[normalize-space(text())='Save']]")));
         WebElement saveButton = saveButtons.get(1);
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", saveButton);
