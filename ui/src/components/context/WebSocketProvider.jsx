@@ -69,7 +69,7 @@ export const WebSocketProvider = ({ children }) => {
   }, [userId]); // Re-run effect if userId changes
 
   return (
-    <SocketContext.Provider value={{ isConnected, messages }}>
+    <SocketContext.Provider value={{ isConnected, eventType,messages }}>
       {children}
     </SocketContext.Provider>
   );

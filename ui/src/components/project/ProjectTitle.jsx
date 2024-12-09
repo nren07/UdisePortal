@@ -105,10 +105,10 @@ function ProjectTitle() {
   // Listen for WebSocket events to load iframe dynamically
   useEffect(() => {
     if (isConnected) {
-      console.log(messages);
-      if (messages == "JOB_STARTED") {
+      console.log(eventType);
+      if (eventType == "JOB_STARTED") {
         startIframe(); // Show iframe when the job starts
-      } else if (messages == "JOB_ENDED") {
+      } else if (eventType == "JOB_ENDED") {
         closeIframe();
       }
     }
