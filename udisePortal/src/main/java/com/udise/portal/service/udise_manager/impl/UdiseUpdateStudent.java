@@ -102,7 +102,7 @@ public class UdiseUpdateStudent {
 //                usernameField.sendKeys("08122604122");
                 WebElement passwordField = driver.findElement(By.id("password-field"));
 //                passwordField.sendKeys("Lokesh@888");
-                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_STARTED", "job started testing"));
+
 
                 while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
                     Thread.sleep(1000);
@@ -406,7 +406,7 @@ public class UdiseUpdateStudent {
         mediumOfInstructionSelect.selectByVisibleText("19-English");
 
         WebElement academicStreamDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//select[@formcontrolname='academicStream']")));
-        Select academicStreamSelect = new Select(mediumOfInstructionDropDown);
+        Select academicStreamSelect = new Select(academicStreamDropdown);
         String academicStreamSelectedValue = academicStreamSelect.getFirstSelectedOption().getAttribute("value"); // or getText() for visible text
 
         if(academicStreamSelectedValue.isBlank()){
