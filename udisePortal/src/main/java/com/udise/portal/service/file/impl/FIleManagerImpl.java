@@ -68,6 +68,7 @@ public class FIleManagerImpl extends AWSFileManagerImpl implements FileManager {
         res.setFileName(fileName);
         res.setExecutionStatus(ExecutionStatus.FILE_UPLOADED);
         res.setUploadedOn(job.getUploadedOn());
+        System.out.println("uploaded file job type is :"+res.getJobType());
         // function to create job records from this job
 //        File downloadedFile=downloadFile(filePath);
         taskExecutor.execute(()->jobRecordManager.createJobRecord(job,file));

@@ -36,10 +36,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class UdiseService2 {
+public class UdiseUpdateStudent {
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(UdiseService1.class);
+    private static final Logger log = LogManager.getLogger(ProgressionActivity.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Adjust the pattern as needed
     DecimalFormat df=new DecimalFormat("0.##########");
     @Autowired
@@ -60,7 +60,7 @@ public class UdiseService2 {
     @Autowired
     private ErrorLogManager errorLogManager;
 
-    public UdiseService2(SimpMessagingTemplate messagingTemplate) {
+    public UdiseUpdateStudent(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 

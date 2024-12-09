@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Service
-public class Type1 {
-    private static final Logger log = LogManager.getLogger(Type1.class);
+public class PrograssionDataExtract {
+    private static final Logger log = LogManager.getLogger(PrograssionDataExtract.class);
     @Autowired
     private JobRecordDao jobRecordDao;
 

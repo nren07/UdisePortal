@@ -35,10 +35,10 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class UdiseService3 {
+public class UdiseAddStudent {
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(UdiseService1.class);
+    private static final Logger log = LogManager.getLogger(ProgressionActivity.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Adjust the pattern as needed
     DecimalFormat df=new DecimalFormat("0.##########");
     @Autowired
@@ -61,7 +61,7 @@ public class UdiseService3 {
     @Autowired
     private ErrorLogManager errorLogManager;
 
-    public UdiseService3(SimpMessagingTemplate messagingTemplate) {
+    public UdiseAddStudent(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -151,7 +151,7 @@ public class UdiseService3 {
             WebElement actionBtn = cols.get(7);
             WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
             viewAndManageBtn.click();
-            addStudent(wait,driver,jobId);
+            addStudent(wait,driver,jobId,userid);
         } catch (MalformedURLException e) {
             log.error("Invalid hub URL: ", e);
         } catch (WebDriverException e) {
@@ -171,7 +171,7 @@ public class UdiseService3 {
         }
     }
 
-    public void addStudent(WebDriverWait wait,WebDriver driver,Long jobId) throws Exception {
+    public void addStudent(WebDriverWait wait,WebDriver driver,Long jobId,String userid) throws Exception {
         try{
             List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
@@ -203,11 +203,11 @@ public class UdiseService3 {
                     List<WebElement> cols = rows.get(0).findElements(By.cssSelector("td"));
                     if(cols.size()==1 && cols.get(0).getAttribute("colspan").equals("12")){
                         addButton.click();
-                        fillPersonalDetails(wait, record, driver);
-                        generalProfileUpdate(wait, record, driver);
-                        enrolmentProfileUpdate(wait, record, driver);
-                        facilityProfileUpdate(wait, record, driver);
-                        confirmProfileUpdate(wait,record,driver);
+                        fillPersonalDetails(wait, record, driver,userid);
+                        generalProfileUpdate(wait, record, driver,userid);
+                        enrolmentProfileUpdate(wait, record, driver,userid);
+                        facilityProfileUpdate(wait, record, driver,userid);
+                        confirmProfileUpdate(wait,record,driver,userid);
                     }else{
                         Iterator<WebElement> rowIterator = rows.iterator();
                         boolean found=false;
@@ -232,33 +232,33 @@ public class UdiseService3 {
                                     Thread.sleep(2000);
                                     gp.click();
                                     Thread.sleep(1000);
-                                    generalProfileUpdate(wait, record, driver);
-                                    enrolmentProfileUpdate(wait, record, driver);
-                                    facilityProfileUpdate(wait, record, driver);
-                                    confirmProfileUpdate(wait,record,driver);
+                                    generalProfileUpdate(wait, record, driver,userid);
+                                    enrolmentProfileUpdate(wait, record, driver,userid);
+                                    facilityProfileUpdate(wait, record, driver,userid);
+                                    confirmProfileUpdate(wait,record,driver,userid);
                                 }else if(ep.getAttribute("class").contains("incomplete")){
                                     Thread.sleep(2000);
                                     ep.click();
                                     Thread.sleep(1000);
-                                    enrolmentProfileUpdate(wait, record, driver);
-                                    facilityProfileUpdate(wait, record, driver);
-                                    confirmProfileUpdate(wait,record,driver);
+                                    enrolmentProfileUpdate(wait, record, driver,userid);
+                                    facilityProfileUpdate(wait, record, driver,userid);
+                                    confirmProfileUpdate(wait,record,driver,userid);
                                 }else if(fp.getAttribute("class").contains("incomplete")){
                                     Thread.sleep(2000);
                                     fp.click();
                                     Thread.sleep(1000);
-                                    facilityProfileUpdate(wait, record, driver);
-                                    confirmProfileUpdate(wait,record,driver);
+                                    facilityProfileUpdate(wait, record, driver,userid);
+                                    confirmProfileUpdate(wait,record,driver,userid);
                                 }else break;
                             }
                         }
                         if(!found){
                             addButton.click();
-                            fillPersonalDetails(wait, record, driver);
-                            generalProfileUpdate(wait, record, driver);
-                            enrolmentProfileUpdate(wait, record, driver);
-                            facilityProfileUpdate(wait, record, driver);
-                            confirmProfileUpdate(wait,record,driver);
+                            fillPersonalDetails(wait, record, driver,userid);
+                            generalProfileUpdate(wait, record, driver,userid);
+                            enrolmentProfileUpdate(wait, record, driver,userid);
+                            facilityProfileUpdate(wait, record, driver,userid);
+                            confirmProfileUpdate(wait,record,driver,userid);
                         }
                     }
                 }catch (Throwable e){
@@ -294,7 +294,7 @@ public class UdiseService3 {
         }
     }
 
-    private void fillPersonalDetails(WebDriverWait wait,JobRecord record, WebDriver driver) throws Throwable {
+    private void fillPersonalDetails(WebDriverWait wait,JobRecord record, WebDriver driver,String userid) throws Throwable {
         try{
             WebElement studentName=wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@formcontrolname='studentName']"))); //student name
             studentName.sendKeys(record.getStudentName());
@@ -359,12 +359,15 @@ public class UdiseService3 {
 
     }
 
-    private void generalProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws Throwable {
+    private void generalProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver,String userid) throws Throwable {
         WebElement addressTextArea = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//textarea[@formcontrolname='address']")));
-
+        messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("ALERT", "general profile update start"));
         if(addressTextArea.getAttribute("value").isBlank()){
             if(record.getAddress()!=null) addressTextArea.sendKeys(record.getAddress());
-            else throw new RuntimeException("Address not present in your record for the student "+record.getStudentName());
+            else {
+                messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("ALERT", "student name is not present"));
+                throw new RuntimeException("Address not present in your record for the student "+record.getStudentName());
+            }
         }
 
         WebElement pincodeField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@name='pincode']")));
@@ -482,7 +485,7 @@ public class UdiseService3 {
         nextBtns.get(0).click();
     }
 
-    private void enrolmentProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws Throwable {
+    private void enrolmentProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver,String userid) throws Throwable {
         WebElement admissionField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@formcontrolname='admnNumber']")));
 
         if(admissionField.getAttribute("value").isBlank()){
@@ -560,7 +563,7 @@ public class UdiseService3 {
         nextBtns.get(1).click();
     }
 
-    private void facilityProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws Throwable {
+    private void facilityProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver,String userid) throws Throwable {
         if(record.isSLD()){
             WebElement screenedForSldRadio = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@type='radio' and @value='1' and @formcontrolname='screenedForSld']")));
             screenedForSldRadio.click();
@@ -655,7 +658,7 @@ public class UdiseService3 {
         nextBtns.get(2).click();
     }
 
-    private void confirmProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver) throws Throwable {
+    private void confirmProfileUpdate(WebDriverWait wait,JobRecord record,WebDriver driver,String userid) throws Throwable {
         WebElement fpCompleteDataBtn = wait.until(
                 ExpectedConditions.elementToBeClickable(By.xpath("//button[span[normalize-space(text())='Complete Data']]"))
         );

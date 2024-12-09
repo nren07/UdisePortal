@@ -32,20 +32,18 @@ public class JobRecordManagerImpl implements JobRecordManager {
     private JobDao jobDao;
 
     @Autowired
-    private Type1 type1;
+    private PrograssionDataExtract prograssionDataExtract;
     @Autowired
     private Type2 type2;
     @Autowired
-    private Type3 type3;
+    private AddOrUpdateDataExtract addOrUpdateDataExtract;
 
     @Async
     public void createJobRecord(Job job, MultipartFile file) {
             if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
-                type1.createJobRecord(job,file);
-            }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
-                type2.createJobRecord(job,file);
+                prograssionDataExtract.createJobRecord(job,file);
             }else{
-                type3.createJobRecord(job,file);
+                addOrUpdateDataExtract.createJobRecord(job,file);
             }
     }
 

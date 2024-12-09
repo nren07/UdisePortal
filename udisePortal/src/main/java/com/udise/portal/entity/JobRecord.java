@@ -39,6 +39,8 @@ public class JobRecord {
     private String fatherName;
     private String aadharNumber;
     private Date dateOfAdmission;
+    private String academicStream;
+    private String subjectGroup;
     private String address;
     private Long pinCode;
     private Long fatherMoNumber;
@@ -404,5 +406,45 @@ public class JobRecord {
 
     public void setNameAsAadhar(String nameAsAadhar) {
         this.nameAsAadhar = nameAsAadhar;
+    }
+
+    public void setStudentPen(Long studentPen) {
+        this.studentPen = studentPen;
+    }
+
+    public void setAttendance(Long attendance) {
+        this.attendance = attendance;
+    }
+
+    public void setStateCode(Long stateCode) {
+        this.stateCode = stateCode;
+    }
+
+    public String getAcademicStream() {
+        return academicStream;
+    }
+
+    public void setAcademicStream(String academicStream) {
+        this.academicStream = academicStream;
+    }
+
+    public String getSubjectGroup() {
+        return subjectGroup;
+    }
+
+    public void setSubjectGroup(String subjectGroup) {
+        this.subjectGroup = subjectGroup;
+    }
+
+    public void setPinCode(Long pinCode) {
+        this.pinCode = pinCode;
+    }
+
+    public void setFatherMoNumber(Long fatherMoNumber) {
+        this.fatherMoNumber = fatherMoNumber;
+    }
+
+    public void setAdmissionNumber(Long admissionNumber) {
+        this.admissionNumber = admissionNumber;
     }
 }

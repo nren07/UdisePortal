@@ -36,11 +36,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class UdiseService1 {
+public class ProgressionActivity {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(UdiseService1.class);
+    private static final Logger log = LogManager.getLogger(ProgressionActivity.class);
     @Autowired
     private DockerManager dockerManager;
 
@@ -52,7 +52,7 @@ public class UdiseService1 {
     @Value("${vnc-login-timeout:#{70}}")
     private int vncLoginTimeOut;
 
-    public UdiseService1(SimpMessagingTemplate messagingTemplate) {
+    public ProgressionActivity(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 

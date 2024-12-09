@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Service
 public class Type2 {
-    private static final Logger log = LogManager.getLogger(Type1.class);
+    private static final Logger log = LogManager.getLogger(PrograssionDataExtract.class);
     @Autowired
     private JobRecordDao jobRecordDao;
 
@@ -82,9 +82,23 @@ public class Type2 {
                     }
 
                     if (headerMap.containsKey("Name As per AADHAAR")) {
-                        Cell cell=currentRow.getCell(headerMap.get("Name As per AADHAAR"));
+                        Cell cell=currentRow.getCell(headerMap.get("name as per aadhar"));
                         if(cell!=null && cell.getCellType()==CellType.STRING){
                             record.setNameAsAadhar(cell.getStringCellValue());
+                        }
+                    }
+
+                    if (headerMap.containsKey("4.2.4(a)academic stream opted by student")) {
+                        Cell cell=currentRow.getCell(headerMap.get("4.2.4(a)academic stream opted by student"));
+                        if(cell!=null && cell.getCellType()==CellType.STRING){
+                            record.setAcademicStream(cell.getStringCellValue());
+                        }
+                    }
+
+                    if (headerMap.containsKey("4.2.4(b)subjects group studied by the student")) {
+                        Cell cell=currentRow.getCell(headerMap.get("4.2.4(b)subjects group studied by the student"));
+                        if(cell!=null && cell.getCellType()==CellType.STRING){
+                            record.setSubjectGroup(cell.getStringCellValue());
                         }
                     }
 

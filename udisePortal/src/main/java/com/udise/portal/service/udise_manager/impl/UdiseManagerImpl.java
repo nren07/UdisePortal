@@ -32,11 +32,11 @@ public class UdiseManagerImpl implements UdiseManager {
     private TaskExecutor taskExecutor;
 
     @Autowired
-    private UdiseService1 udiseService1;
+    private ProgressionActivity progressionActivity;
     @Autowired
-    private UdiseService2 udiseService2; //Add new students
+    private UdiseUpdateStudent udiseUpdateStudent; //Add new students
     @Autowired
-    private UdiseService3 udiseService3; // update profiles
+    private UdiseAddStudent udiseAddStudent; // update profiles
     private Map<Long,Boolean> liveJobs;
 
     private static final Logger log = LogManager.getLogger(UdiseManagerImpl.class);
@@ -52,11 +52,6 @@ public class UdiseManagerImpl implements UdiseManager {
         if(jobRecordList.size()>0){
             liveJobs.put(jobId,true);
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
-//            DockerVo dockerVo=new DockerVo();
-//            dockerVo.setVncPort(1000);
-//            dockerVo.setHostPort(2000);
-//            dockerVo.setContainerName("1234");
-//            dockerVo.setContainerId("1234");
             if(dockerVo==null){
                 return new JobStartResponseVo(null,"internal server error");
             }
@@ -66,11 +61,11 @@ public class UdiseManagerImpl implements UdiseManager {
             taskExecutor.execute(() -> {
                 try {
                     if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
-                        udiseService1.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
+                        progressionActivity.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
-                        udiseService2.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
+                        udiseUpdateStudent.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else{
-                        udiseService3.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
+                        udiseAddStudent.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }
                 } catch (InterruptedException | IOException e) {
                     throw new RuntimeException(e);
