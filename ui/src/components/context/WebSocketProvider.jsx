@@ -13,6 +13,7 @@ export const useSocket = () => useContext(SocketContext);
 export const WebSocketProvider = ({ children }) => {
   const stompClientRef = useRef(null); // Ref to store the STOMP client instance
   const [isConnected, setIsConnected] = useState(false); // Track connection status
+  const[eventType,setEventType]=useState("");
   const [messages, setMessages] = useState(""); // Store messages
   const userId = useSelector(selectUserId); // Get userId from Redux
 
@@ -37,7 +38,8 @@ export const WebSocketProvider = ({ children }) => {
           const { body } = msg;
           const data=JSON.parse(body);
           console.log(data);
-          setMessages(data.eventType);
+          setEventType(data.eventType);
+          setMessages(data.msg);
         });
       },
 

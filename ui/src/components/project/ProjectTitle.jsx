@@ -31,7 +31,7 @@ function ProjectTitle() {
   const role = useSelector(selectRole);
   const expirationTime = useSelector(selectTokenExpiration);
   const navigate = useNavigate();
-  const { isConnected, messages } = useSocket();
+  const { isConnected, eventType , messages } = useSocket();
 
   // console.log(vncPort);
   // console.log(showIframe);
