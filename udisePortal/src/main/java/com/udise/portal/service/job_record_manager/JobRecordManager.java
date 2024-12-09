@@ -1,4 +1,4 @@
-package com.udise.portal.service.job.job_record_manager;
+package com.udise.portal.service.job_record_manager;
 
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;

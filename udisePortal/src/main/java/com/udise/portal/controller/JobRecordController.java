@@ -1,6 +1,6 @@
 package com.udise.portal.controller;
 
-import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.job.JobRecordResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

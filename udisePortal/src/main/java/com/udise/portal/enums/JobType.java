@@ -1,9 +1,9 @@
 package com.udise.portal.enums;
 
 public enum JobType {
-    SERVICE1("SERVICE1"),
-    SERVICE2("SERVICE2"),
-    SERVICE3("SERVICE3");
+    PROGRESSION_ACTIVITY("PROGRESSION_ACTIVITY"),
+    ADD_NEW_STUDENTS("ADD_NEW_STUDENTS"),
+    UPDATE_STUDENTS("UPDATE_STUDENTS");
 
     private final String displayName;
 

@@ -30,7 +30,7 @@ public class Client {
     }
 
     public void setCreditPoint(Long creditPoint) {
-        this.creditPoint = creditPoint;
+        this.creditPoint = this.creditPoint+creditPoint;
     }
 
 

@@ -1,4 +1,4 @@
-package com.udise.portal.service.job.job_manager;
+package com.udise.portal.service.job_manager;
 
 import com.udise.portal.vo.job.JobResVo;
 import com.udise.portal.vo.job.JobStartResponseVo;

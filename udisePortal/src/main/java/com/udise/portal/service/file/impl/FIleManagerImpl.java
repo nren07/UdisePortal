@@ -8,7 +8,7 @@ import com.udise.portal.enums.ExecutionStatus;
 import com.udise.portal.enums.JobStatus;
 import com.udise.portal.service.aws.impl.AWSFileManagerImpl;
 import com.udise.portal.service.file.FileManager;
-import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.file_upload.FileReqVo;
 import com.udise.portal.vo.job.JobResVo;
 import org.apache.logging.log4j.LogManager;

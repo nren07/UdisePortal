@@ -4,7 +4,7 @@ import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobType;
 import com.udise.portal.service.docker_manager.DockerManager;
-import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.service.udise_manager.UdiseManager;
 import com.udise.portal.vo.docker.DockerVo;
 import com.udise.portal.vo.job.JobStartResponseVo;
@@ -65,9 +65,9 @@ public class UdiseManagerImpl implements UdiseManager {
             //            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
             taskExecutor.execute(() -> {
                 try {
-                    if(job.getJobType()== JobType.SERVICE1){
+                    if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
                         udiseService1.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
-                    }else if(job.getJobType()== JobType.SERVICE2){
+                    }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
                         udiseService2.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else{
                         udiseService3.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);

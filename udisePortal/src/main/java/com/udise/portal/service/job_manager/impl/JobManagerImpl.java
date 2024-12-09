@@ -1,11 +1,11 @@
-package com.udise.portal.service.job.job_manager.impl;
+package com.udise.portal.service.job_manager.impl;
 
 import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;
 import com.udise.portal.service.docker_manager.DockerManager;
-import com.udise.portal.service.job.job_manager.JobManager;
-import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.job_manager.JobManager;
+import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.service.udise_manager.UdiseManager;
 import com.udise.portal.vo.job.*;
 import jakarta.transaction.Transactional;

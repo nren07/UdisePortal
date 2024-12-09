@@ -1,4 +1,4 @@
-package com.udise.portal.service.job.job_record_manager.impl;
+package com.udise.portal.service.job_record_manager.impl;
 
 import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
@@ -6,7 +6,7 @@ import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobStatus;
 import com.udise.portal.enums.JobType;
-import com.udise.portal.service.job.job_record_manager.JobRecordManager;
+import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.job.JobRecordResponseVo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,9 +40,9 @@ public class JobRecordManagerImpl implements JobRecordManager {
 
     @Async
     public void createJobRecord(Job job, MultipartFile file) {
-            if(job.getJobType()== JobType.SERVICE1){
+            if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
                 type1.createJobRecord(job,file);
-            }else if(job.getJobType()== JobType.SERVICE2){
+            }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
                 type2.createJobRecord(job,file);
             }else{
                 type3.createJobRecord(job,file);
