@@ -1,5 +1,9 @@
 package com.udise.portal.service.udise_manager.impl;
 
+import com.udise.portal.dao.AppUserDao;
+import com.udise.portal.dao.ClientDao;
+import com.udise.portal.entity.AppUser;
+import com.udise.portal.entity.Client;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobType;
@@ -49,6 +53,8 @@ public class UdiseManagerImpl implements UdiseManager {
     public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException {
         if(liveJobs.containsKey(jobId)) return new JobStartResponseVo(null,"Job Already in Progress");
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
+        long remainingCredit=job.getAppUser().getClient().getCreditPoint();
+        if(remainingCredit<jobRecordList.size()) return new JobStartResponseVo(null,"sufficient credit points is not available");
         if(jobRecordList.size()>0){
             liveJobs.put(jobId,true);
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
@@ -76,5 +82,9 @@ public class UdiseManagerImpl implements UdiseManager {
             return new JobStartResponseVo(null,"Record Not Found");
         }
 
+    }
+
+    public boolean isCreditAvailable(Job job){
+        long client=job.getAppUser().getClient().getCreditPoint();
     }
 }

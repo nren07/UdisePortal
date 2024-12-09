@@ -1,6 +1,10 @@
 package com.udise.portal.service.udise_manager.impl;
 
+import com.udise.portal.dao.AppUserDao;
+import com.udise.portal.dao.ClientDao;
+import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
+import com.udise.portal.entity.Client;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.Category;
@@ -54,6 +58,15 @@ public class UdiseUpdateStudent {
     @Autowired
     private JobRecordDao jobRecordDao;
 
+    @Autowired
+    private JobDao jobDao;
+
+    @Autowired
+    private AppUserDao appUserDao;
+
+    @Autowired
+    private ClientDao clientDao;
+
     @Value("${vnc-login-timeout:#{70}}")
     private int vncLoginTimeOut;
 
@@ -73,6 +86,8 @@ public class UdiseUpdateStudent {
         try{
             WebDriver driver = null; // Declare driver her
             job.setJobStatus(JobStatus.IN_PROGRESS);
+            jobDao.update(job);
+            boolean isJobCompleted=true;
             log.info("Job Start");
             String userid=String.valueOf(job.getAppUser().getId());
             try {
@@ -131,7 +146,7 @@ public class UdiseUpdateStudent {
                 WebElement actionBtn = cols.get(7);
                 WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
                 viewAndManageBtn.click();
-                update(wait,driver,jobId);
+                update(wait,driver,jobId,isJobCompleted);
             } catch (WebDriverException e) {
                 job.setJobStatus(JobStatus.PENDING);
                 log.error("WebDriver encountered an error", e);
@@ -146,6 +161,10 @@ public class UdiseUpdateStudent {
                     driver.quit();
                 }
                 liveJobs.remove(jobId);
+                if(isJobCompleted){
+                    job.setJobStatus(JobStatus.COMPLETED);
+                    jobDao.update(job);
+                }
                 messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
                 dockerManager.stopAndRemoveContainer(containerId,dockerVo);
             }
@@ -154,8 +173,9 @@ public class UdiseUpdateStudent {
         }
     }
 
-    public void update(WebDriverWait wait,WebDriver driver,Long jobId) throws InterruptedException {
+    public void update(WebDriverWait wait,WebDriver driver,Long jobId,boolean isJobComplete) throws InterruptedException {
         List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
+
         ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
         for (JobRecord record : records) {
             if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED){
@@ -236,6 +256,13 @@ public class UdiseUpdateStudent {
                     facilityProfileUpdate(wait, record, driver);
                     confirmProfileUpdate(wait,record,driver);
                 }else continue;
+                Job job=jobDao.getById(Job.class,jobId);
+                job.incrementCredit();
+                jobDao.update(job);
+                job.getAppUser().incrementCredit();
+                appUserDao.update(job.getAppUser());
+                job.getAppUser().getClient().decrementCredit();
+                clientDao.update(job.getAppUser().getClient());
 
             }catch (Throwable e){
                 try{
@@ -263,6 +290,7 @@ public class UdiseUpdateStudent {
                 }
                 if(record.getJobStatus()==JobStatus.COMPLETED) continue;
                 record.setJobStatus(JobStatus.PENDING);
+                isJobComplete=false;
                 jobRecordDao.update(record);
                 log.info("error while doing operation in student :{}",record.getStudentName());
             }

@@ -30,7 +30,18 @@ public class Client {
     }
 
     public void setCreditPoint(Long creditPoint) {
-        this.creditPoint = this.creditPoint+creditPoint;
+        this.creditPoint = this.creditPoint;
+    }
+
+    public void addCreditPoint(Long creditPoint){
+        this.creditPoint+=creditPoint;
+    }
+    public void incrementCredit() {
+        this.creditPoint++;
+    }
+
+    public void decrementCredit() {
+        this.creditPoint--;
     }
 
 

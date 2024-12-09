@@ -36,7 +36,7 @@ public class AppUser {
     private Gender gender;
     private Role role;
     private RegistrationStatus registrationStatus;
-    private Long usedCredit;
+    private long usedCredit;
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = Client.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
@@ -147,12 +147,14 @@ public class AppUser {
         this.usedCredit = usedCredit;
     }
 
-    public void incrementCreditPoint(){
+    public void incrementCredit() {
         this.usedCredit++;
     }
-    public void decrementCredit(){
+
+    public void decrementCredit() {
         this.usedCredit--;
     }
+
 
     public Client getClient() {
         return client;

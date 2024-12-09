@@ -39,6 +39,8 @@ public class Job {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
 
+    private long usedCredit;
+
     public Long getId() {
         return id;
     }
@@ -109,6 +111,22 @@ public class Job {
 
     public void setAppUser(AppUser appUser) {
         this.appUser = appUser;
+    }
+
+    public long getUsedCredit() {
+        return usedCredit;
+    }
+
+    public void setUsedCredit(long usedCredit) {
+        this.usedCredit = usedCredit;
+    }
+
+    public void incrementCredit() {
+        this.usedCredit++;
+    }
+
+    public void decrementCredit() {
+        this.usedCredit--;
     }
 
 }
