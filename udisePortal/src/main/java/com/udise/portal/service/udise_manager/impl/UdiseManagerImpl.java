@@ -67,7 +67,7 @@ public class UdiseManagerImpl implements UdiseManager {
                 try {
                     if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
                         udiseService1.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
-                    }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
+                    }else if(job.getJobType()== JobType.ADD_NEW_STUDENTS){
                         udiseService2.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else{
                         udiseService3.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);

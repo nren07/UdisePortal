@@ -42,7 +42,7 @@ public class JobRecordManagerImpl implements JobRecordManager {
     public void createJobRecord(Job job, MultipartFile file) {
             if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
                 type1.createJobRecord(job,file);
-            }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
+            }else if(job.getJobType()== JobType.ADD_NEW_STUDENTS){
                 type2.createJobRecord(job,file);
             }else{
                 type3.createJobRecord(job,file);
