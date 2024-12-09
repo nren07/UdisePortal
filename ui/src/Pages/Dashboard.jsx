@@ -7,7 +7,7 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserId,selectToken,selectTokenExpiration,selectUsername } from "../store/useSelectors";
-import { clearUser,setUserId,setRole,setToken} from "../store/userSlice";
+import { clearUser} from "../store/userSlice";
 
 const Dashboard = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("All");
@@ -16,10 +16,14 @@ const Dashboard = () => {
   const userId = useSelector(selectUserId);
   const token = useSelector(selectToken);
   const expirationTime = useSelector(selectTokenExpiration);
+  const dispatch=useDispatch();
 
-  // useEffect(() => {
-  //   if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  // }, [expirationTime, navigate]);
+  useEffect(() => {
+    if (Date.now() >= expirationTime || !token || !userId) {
+      dispatch(clearUser());
+      navigate("/");
+    }
+  }, [dispatch, navigate, expirationTime, token, userId]);
 
   const handleButtonClick = (timeframe) => {
     setSelectedTimeframe(timeframe);
@@ -77,9 +81,27 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+  const fetchProjectList = async () => {
+    try {
+      const response = await fetch(`http://udise.pytosoft.com/v1/job/${userId}/getJobs`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      // setProjectList(data);
+    } catch (error) {
+      console.error("Something went wrong", error);
+    }
+  };
+ 
   return (
     <div
       className="mt-4"

@@ -271,7 +271,8 @@
 //   );
 // }
 
-import * as React from "react";
+// import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -281,7 +282,7 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
+import CloseIcon from "@mui/icons-material/Close";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -292,11 +293,12 @@ import logo from "../../assets/logo.png";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button, Popover, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser } from "../../store/userSlice";
+import { selectUserId, selectRole, selectToken, selectTokenExpiration } from "../../store/useSelectors";
 
-const AppBar = styled(
-  MuiAppBar,
-  {}
-)(({ theme }) => ({
+const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
 }));
 
@@ -311,6 +313,18 @@ export default function Navbar() {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const isNotificationOpen = Boolean(notificationAnchorEl);
 
+  const userId = useSelector(selectUserId);
+  const token = useSelector(selectToken);
+  const expirationTime = useSelector(selectTokenExpiration);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (Date.now() >= expirationTime || !token || !userId) {
+      dispatch(clearUser());
+      navigate("/login"); // Ensure the login route
+    }
+  }, [dispatch, navigate, expirationTime, token, userId]);
 
   const handleDrawerToggle = () => {
     updateOpen(!dopen);
@@ -337,6 +351,11 @@ export default function Navbar() {
     handleMobileMenuClose();
   };
 
+  const logout = () => {
+    dispatch(clearUser());
+    handleMenuClose(); // Close the profile menu
+    navigate("/"); // Navigate to the login page
+  };
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
@@ -358,14 +377,8 @@ export default function Navbar() {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
-      PaperProps={{
-        sx: {
-          width: "230px",
-          height: "80px",
-        },
-      }}
     >
-      <MenuItem onClick={handleMenuClose} sx={{ mt:  -1}}>
+      <MenuItem onClick={logout} sx={{ mt: -1 }}>
         <ListItemIcon>
           <LogoutIcon fontSize="small" />
         </ListItemIcon>
@@ -457,11 +470,7 @@ export default function Navbar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        elevation={0}
-        sx={{ backgroundColor: "#ffffff" }}
-      >
+      <AppBar position="fixed" elevation={0} sx={{ backgroundColor: "#ffffff" }}>
         <Toolbar>
           {/* Logo Icon */}
           <Box component="div" sx={{ display: { xs: "none", sm: "block" } }}>
@@ -506,11 +515,7 @@ export default function Navbar() {
 
           {/* Notifications, Messages, and Profile Icons */}
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="black"
-            >
+            <IconButton size="large" aria-label="show 4 new mails" color="black">
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>

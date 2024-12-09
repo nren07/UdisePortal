@@ -7,9 +7,12 @@ import "./Project.css";
 import ProjectList from "../components/project/ProjectList";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserId,selectToken,selectTokenExpiration } from "../store/useSelectors";
+import { clearUser } from "../store/userSlice";
+import Upload from "../components/Uploads/Upload";
 
 const Projects = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const role = "portal_admin"; // Consider using this role in your logic if necessary.
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
@@ -19,11 +22,20 @@ const Projects = () => {
   const navigate=useNavigate();
   const dispatch=useDispatch();
 
-  // useEffect(() => {
-  //   if (Date.now() >= expirationTime) {
-  //     navigate("/");
-  //   }
-  // }, [expirationTime, dispatch]);
+  useEffect(() => {
+    if (Date.now() >= expirationTime || !token || !userId) {
+      dispatch(clearUser());
+      navigate("/");
+    }
+  }, [dispatch, navigate, expirationTime, token, userId]);
+
+  const handleOpenModal = () => {
+    setShowModal(true); // Open modal when button is clicked
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Close modal when user clicks close button or outside
+  };
 
 
   return (
@@ -33,13 +45,15 @@ const Projects = () => {
         <div className="page-content">
           <div className="container-fluid">
             <Header />
-            <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+            <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} handleOpenModal={handleOpenModal} />
+            {showModal && <Upload handleClose={handleCloseModal} />}
             <ProjectList />
           </div>
         </div>
       </div>
     </div>
   );
+
 };
 
 // Header Component
@@ -69,7 +83,7 @@ const Breadcrumb = () => (
 );
 
 // SearchBar Component
-const SearchBar = ({ searchTerm, onSearchChange }) => (
+const SearchBar = ({ searchTerm, onSearchChange,handleOpenModal }) => (
   <div>
     <div className="card mt-3">
       <div className="card-body" style={{ backgroundColor: "white" }}>
@@ -87,9 +101,9 @@ const SearchBar = ({ searchTerm, onSearchChange }) => (
             </div>
           </div>
           <div className="col-md-auto ms-auto">
-            <Link to="/Upload" className="btn btn-success mt-1 py-1">
+            <button onClick={handleOpenModal} className="btn btn-success mt-1 py-1">
               <i className="ri-add-fill align-bottom me-1"></i> Add Project
-            </Link>
+            </button>
           </div>
         </div>
       </div>

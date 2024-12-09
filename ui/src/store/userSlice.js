@@ -43,15 +43,7 @@ const userSlice = createSlice({
     },
     clearUser(state) {
       sessionStorage.removeItem('userState');
-      return {
-        userId: null,
-        jobId: null,
-        role: null,
-        jobRecordId: null,
-        token: null,
-        username: null,  // Reset username on clear
-        tokenExpiration: null, // Reset token expiration
-      };
+      state=initialState;
     },
   },
 });

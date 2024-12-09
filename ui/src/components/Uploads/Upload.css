@@ -1,19 +1,42 @@
-.container {
-    max-width: 600px;
-  }
-  
-  .shadow {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  @media (max-width: 576px) {
-    .form-label {
-      font-size: 14px;
-    }
-  
-    .btn {
-      font-size: 16px;
-      padding: 10px;
-    }
-  }
-  
+
+
+/* The overlay that covers the entire screen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure modal is on top */
+}
+
+/* Modal content style */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px; /* Maximum width of the modal */
+  position: relative;
+}
+
+/* Close button style */
+.close-btn {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  background-color: transparent;
+  border: 1px solid white;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 20%;
+}
+
+.close-btn:hover{
+  background-color: rgb(117, 117, 248);
+}
+

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -11,17 +11,18 @@ import {
   selectTokenExpiration,
   selectUserId,
 } from "../../store/useSelectors"; // Import setJobId
+import { clearUser } from "../../store/userSlice";
 
 import { styles } from "./styles";
 import { useSocket } from "./../context/WebSocketProvider";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function ProjectTitle() {
   const location = useLocation();
   const { item } = location.state;
   // State to manage the job status
-  const [isJobStarted, setIsJobStarted] = useState(
-    false
-  );
+  const [isJobStarted, setIsJobStarted] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [jobRecordData, setJobRecordData] = useState([]);
   const [showIframe, setShowIframe] = useState(false); // Control iframe visibility
   const [vncPort, setVncPort] = useState(null);
@@ -31,7 +32,8 @@ function ProjectTitle() {
   const role = useSelector(selectRole);
   const expirationTime = useSelector(selectTokenExpiration);
   const navigate = useNavigate();
-  const { isConnected, eventType , messages } = useSocket();
+  const { isConnected, eventType, messages } = useSocket();
+  const dispatch=useDispatch();
 
   // console.log(vncPort);
   // console.log(showIframe);
@@ -41,17 +43,19 @@ function ProjectTitle() {
       // const timer = setInterval(() => {
       //   setCounter((prevCounter) => prevCounter - 1);
       // }, 1000);
-
       // // Clear the interval when component unmounts or counter reaches 0
       // return () => clearInterval(timer);
-    }else if(counter==0){
+    } else if (counter == 0) {
       setShowIframe(false);
     }
-  }, [counter,showIframe]);
+  }, [counter, showIframe]);
 
-  // useEffect(() => {
-  //   if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  // }, [navigate]);
+  useEffect(() => {
+    if (Date.now() >= expirationTime || !token || !userId) {
+      dispatch(clearUser());
+      navigate("/");
+    }
+  }, [dispatch, navigate, expirationTime, token, userId]);
 
   // Function to handle job start
   const handleStartJob = () => {
@@ -86,12 +90,11 @@ function ProjectTitle() {
           Authorization: `Bearer ${token}`,
         },
       });
-      if(response.ok){
-
+      if (response.ok) {
       }
       const data = await response.json();
       // setVncPort(data.vncPort); // Set to an empty array if not an array
-      
+
       setVncPort(data.vncPort);
     } catch (error) {
       console.error("Something went wrong", error);
@@ -101,6 +104,17 @@ function ProjectTitle() {
 
   const startIframe = () => setShowIframe(true);
   const closeIframe = () => setShowIframe(false); // Close iframe
+
+  useEffect(() => {
+    console.log(item);
+    if (item.jobStatus == "PENDING") {
+      setIsJobStarted(false);
+    } else if (item.jobStatus == "IN_PROGRESS") {
+      setLoader(true);
+      setIsJobStarted(true);
+    } else {
+    }
+  }, [item]);
 
   // Listen for WebSocket events to load iframe dynamically
   useEffect(() => {
@@ -177,22 +191,35 @@ function ProjectTitle() {
                             <div className="ms-3">
                               <div className="d-flex justify-content-between">
                                 <h4 className="fw-bold">{item.jobTitle}</h4>
-                                <button
-                                  id="startJobButton"
-                                  className={`btn btn-primary ${
-                                    isJobStarted ? "disabled" : ""
-                                  }`}
-                                  onClick={handleStartJob}
-                                  disabled={isJobStarted}
-                                >
-                                  {isJobStarted ? (
-                                    <i className="fas fa-spinner fa-spin"></i>
-                                  ) : (
-                                    <i className="fas fa-play"></i>
-                                  )}
-                                  {showIframe ? "Job Started" : isJobStarted?"Wait...":"Start Job"}
-                                </button>
+                                {!loader && (
+                                  <button
+                                    id="startJobButton"
+                                    className={`btn btn-primary ${
+                                      isJobStarted ? "disabled" : ""
+                                    }`}
+                                    onClick={handleStartJob}
+                                    disabled={isJobStarted}
+                                  >
+                                    {isJobStarted ? (
+                                      <i className="fas fa-spinner fa-spin"></i>
+                                    ) : (
+                                      <i className="fas fa-play"></i>
+                                    )}
+                                    {showIframe
+                                      ? "Job Started"
+                                      : isJobStarted
+                                      ? "Wait..."
+                                      : "Start Job"}
+                                  </button>
+                                )}
+                                {<ClipLoader loading={loader}
+                                    size={30}
+                                    aria-label="Loading Spinner"
+                                    data-testid="loader"
+                                  />
+                                }
                               </div>
+
                               <div className="hstack gap-3 flex-wrap">
                                 <div>
                                   Start Date:{" "}
@@ -261,7 +288,7 @@ function ProjectTitle() {
               </div>
             </div>
 
-            <div className="row">
+            {<div className="row">
               {" "}
               <div className="col-lg-12">
                 <div className="tab-content text-muted">
@@ -322,7 +349,10 @@ function ProjectTitle() {
                               )}
 
                               {jobRecordData.map((record, index) => (
-                                <tr key={`${record.id}-${index}`} className="table-row">
+                                <tr
+                                  key={`${record.id}-${index}`}
+                                  className="table-row"
+                                >
                                   <td>{index + 1}</td>
                                   <td>{record.studentName}</td>
                                   <td>{record.className}</td>
@@ -341,7 +371,7 @@ function ProjectTitle() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       )}
@@ -349,7 +379,7 @@ function ProjectTitle() {
         <div style={styles.iframeOverlay}>
           <div style={styles.iframeContainer}>
             <div className="d-flex justify-content-between">
-              <p  style={styles.counter}>login before {counter} sec</p>;
+              <p style={styles.counter}>login before {counter} sec</p>;
               <button style={styles.closeButton} onClick={closeIframe}>
                 &times;
               </button>

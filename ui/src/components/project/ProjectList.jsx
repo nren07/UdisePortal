@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
+import { clearUser } from "../../store/userSlice";
 import { selectUserId, selectRole, selectToken,selectTokenExpiration } from "../../store/useSelectors";
 import "./ProjectList.css";
 
@@ -14,11 +15,11 @@ export default function ProjectList() {
   const dispatch=useDispatch();
 
   useEffect(() => {
-    if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  }, [expirationTime, navigate]);
-  // useEffect(() => {
-  //    userId??navigate("/");
-  // }, [userId, navigate]);
+    if (Date.now() >= expirationTime || !token || !userId) {
+      dispatch(clearUser());
+      navigate("/");
+    }
+  }, [dispatch, navigate, expirationTime, token, userId]);
 
   // Fetch project list
   const fetchProjectList = async () => {

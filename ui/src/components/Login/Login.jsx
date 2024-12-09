@@ -38,21 +38,7 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Access Redux state to check if user ID and token are already present
-  const userId = useSelector(selectUserId);
-  const token = useSelector(selectToken);
-  const expirationTime = useSelector(selectTokenExpiration);
 
-  useEffect(() => {
-    if (Date.now() >= expirationTime || !token || !userId) navigate("/");
-  }, [expirationTime, navigate]);
-
-  useEffect(() => {
-    // Redirect to dashboard if user is already logged in
-    if (userId && token) {
-      navigate("/DashBoard");
-    }
-  }, [userId, token, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
