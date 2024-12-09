@@ -158,7 +158,9 @@ public class UdiseService2 {
         List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
         ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
         for (JobRecord record : records) {
-            if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED) continue;
+            if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED){
+                continue;
+            }
             try{
                 record.setJobStatus(JobStatus.IN_PROGRESS);
                 jobRecordDao.update(record);
