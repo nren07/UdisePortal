@@ -1,4 +1,7 @@
-package com.udise.portal.service.udise_manager.impl;
+package com.udise.portal.service.udise_manager.udise_services.impl;
+import com.udise.portal.dao.AppUserDao;
+import com.udise.portal.dao.ClientDao;
+import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
@@ -9,8 +12,6 @@ import com.udise.portal.service.error_log.ErrorLogManager;
 import com.udise.portal.service.job_record_manager.JobRecordManager;
 import com.udise.portal.vo.docker.DockerVo;
 import com.udise.portal.vo.job.SocketResponseVo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -18,6 +19,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
@@ -36,13 +38,23 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class UdiseAddStudent {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(UdiseAddStudent.class);
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(ProgressionActivity.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Adjust the pattern as needed
     DecimalFormat df=new DecimalFormat("0.##########");
     @Autowired
     private DockerManager dockerManager;
+
+    @Autowired
+    private JobDao jobDao;
+
+    @Autowired
+    private AppUserDao appUserDao;
+
+    @Autowired
+    private ClientDao clientDao;
+
 
     @Autowired
     private JobRecordManager jobRecordManager;
@@ -72,6 +84,7 @@ public class UdiseAddStudent {
         int loginTimeOut=vncLoginTimeOut;
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         WebDriver driver = null; // Declare driver her
+        Boolean isJobCompleted=true;
         job.setJobStatus(JobStatus.IN_PROGRESS);
         log.info("Job Start");
         String userid=String.valueOf(job.getAppUser().getId());
@@ -110,7 +123,7 @@ public class UdiseAddStudent {
             while (driver.getCurrentUrl().equals(currentUrl) && loginTimeOut>=0) {
                 Thread.sleep(1000);
                 loginTimeOut--;  // Poll every second
-                log.info(loginTimeOut);
+                log.info(String.valueOf(loginTimeOut));
             }
             if(loginTimeOut<0){
                 return;
@@ -139,19 +152,25 @@ public class UdiseAddStudent {
 //                imageElement.click();
 //                return;
 //            }
-            log.info("after close ");
-            WebElement ele3= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']"))); //DashBoard
-            ele3.click();
-            log.info("after Dashboard ");
-            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
-            log.info("length of rows are : {}",rows.size());
 
-            WebElement row1=rows.get(0);
-            List<WebElement> cols = row1.findElements(By.cssSelector("td"));
-            WebElement actionBtn = cols.get(7);
-            WebElement viewAndManageBtn = actionBtn.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
-            viewAndManageBtn.click();
-            addStudent(wait,driver,jobId,userid);
+            // Wait for and click the 'School Dashboard' element
+            WebElement dashboardElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()=' School Dashboard ']")));
+            dashboardElement.click();
+
+            // Get all rows from the table
+            List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
+            WebElement firstRow = rows.get(0);
+
+            // Get columns of the first row
+            List<WebElement> columns = firstRow.findElements(By.cssSelector("td"));
+            WebElement actionButton = columns.get(7);
+
+            // Find and click the 'View/Manage' button
+            WebElement viewManageButton = actionButton.findElement(By.xpath("//a[contains(text(), 'View/Manage')]"));
+            viewManageButton.click();
+
+            // Proceed with adding a student
+            addStudent(wait,driver,jobId,userid,isJobCompleted);
         } catch (MalformedURLException e) {
             log.error("Invalid hub URL: ", e);
         } catch (WebDriverException e) {
@@ -160,18 +179,19 @@ public class UdiseAddStudent {
             log.error("An unexpected error occurred", e);
         }
         finally {
-            // Close the driver safely
-            log.info("in case of return finally block");
-            if (driver != null) {
-                driver.quit();
-            }
+            if (driver != null) driver.quit();
             liveJobs.remove(jobId);
+            if(isJobCompleted){
+                job.setJobStatus(JobStatus.COMPLETED);
+                jobDao.update(job);
+            }
+            else job.setJobStatus(JobStatus.PENDING);
             messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
             dockerManager.stopAndRemoveContainer(containerId,dockerVo);
         }
     }
 
-    public void addStudent(WebDriverWait wait,WebDriver driver,Long jobId,String userid) throws Exception {
+    public void addStudent(WebDriverWait wait,WebDriver driver,Long jobId,String userid,Boolean isJobComplete) throws Exception {
         try{
             List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
@@ -201,56 +221,58 @@ public class UdiseAddStudent {
                     Thread.sleep(1000);
                     List<WebElement> rows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tbody[role='rowgroup'] tr")));
                     List<WebElement> cols = rows.get(0).findElements(By.cssSelector("td"));
-                    if(cols.size()==1 && cols.get(0).getAttribute("colspan").equals("12")){
+                    if(cols.size()==1){
                         addButton.click();
                         fillPersonalDetails(wait, record, driver,userid);
                         generalProfileUpdate(wait, record, driver,userid);
                         enrolmentProfileUpdate(wait, record, driver,userid);
                         facilityProfileUpdate(wait, record, driver,userid);
                         confirmProfileUpdate(wait,record,driver,userid);
+                        updateCredit(jobId);
                     }else{
                         Iterator<WebElement> rowIterator = rows.iterator();
                         boolean found=false;
                         while (rowIterator.hasNext()) {
                             WebElement row = rowIterator.next();
                             cols = row.findElements(By.cssSelector("td"));
-                            WebElement name = cols.get(2);
-                            WebElement entryStatus = cols.get(5);
-                            WebElement dob = cols.get(4);
+                            WebElement name = cols.get(2), entryStatus = cols.get(5), dob = cols.get(4), profile = cols.get(6);
 
                             if (!name.getText().equals(record.getStudentName()) || !dob.getText().equals(dateFormat.format(record.getDob()))) continue;
                             found=true;
-                            WebElement profile = cols.get(6);
+
                             if (entryStatus.getText().contains("Completed")) {
                                 break;
-                            }else{
-                                WebElement gp=profile.findElement(By.xpath("//a[contains(text(), 'GP')]"));
-                                WebElement ep=profile.findElement(By.xpath("//a[contains(text(), 'EP')]"));
-                                WebElement fp=profile.findElement(By.xpath("//a[contains(text(), 'FP')]"));
-
-                                if(gp.getAttribute("class").contains("incomplete")){
-                                    Thread.sleep(2000);
-                                    gp.click();
-                                    Thread.sleep(1000);
-                                    generalProfileUpdate(wait, record, driver,userid);
-                                    enrolmentProfileUpdate(wait, record, driver,userid);
-                                    facilityProfileUpdate(wait, record, driver,userid);
-                                    confirmProfileUpdate(wait,record,driver,userid);
-                                }else if(ep.getAttribute("class").contains("incomplete")){
-                                    Thread.sleep(2000);
-                                    ep.click();
-                                    Thread.sleep(1000);
-                                    enrolmentProfileUpdate(wait, record, driver,userid);
-                                    facilityProfileUpdate(wait, record, driver,userid);
-                                    confirmProfileUpdate(wait,record,driver,userid);
-                                }else if(fp.getAttribute("class").contains("incomplete")){
-                                    Thread.sleep(2000);
-                                    fp.click();
-                                    Thread.sleep(1000);
-                                    facilityProfileUpdate(wait, record, driver,userid);
-                                    confirmProfileUpdate(wait,record,driver,userid);
-                                }else break;
                             }
+
+                            WebElement gp=profile.findElement(By.xpath("//a[contains(text(), 'GP')]"));
+                            WebElement ep=profile.findElement(By.xpath("//a[contains(text(), 'EP')]"));
+                            WebElement fp=profile.findElement(By.xpath("//a[contains(text(), 'FP')]"));
+
+                            if(gp.getAttribute("class").contains("incomplete")){
+                                Thread.sleep(2000);
+                                gp.click();
+                                Thread.sleep(1000);
+                                generalProfileUpdate(wait, record, driver,userid);
+                                enrolmentProfileUpdate(wait, record, driver,userid);
+                                facilityProfileUpdate(wait, record, driver,userid);
+                                confirmProfileUpdate(wait,record,driver,userid);
+                                updateCredit(jobId);
+                            }else if(ep.getAttribute("class").contains("incomplete")){
+                                Thread.sleep(2000);
+                                ep.click();
+                                Thread.sleep(1000);
+                                enrolmentProfileUpdate(wait, record, driver,userid);
+                                facilityProfileUpdate(wait, record, driver,userid);
+                                confirmProfileUpdate(wait,record,driver,userid);
+                                updateCredit(jobId);
+                            }else if(fp.getAttribute("class").contains("incomplete")){
+                                Thread.sleep(2000);
+                                fp.click();
+                                Thread.sleep(1000);
+                                facilityProfileUpdate(wait, record, driver,userid);
+                                confirmProfileUpdate(wait,record,driver,userid);
+                                updateCredit(jobId);
+                            }else break;
                         }
                         if(!found){
                             addButton.click();
@@ -259,16 +281,16 @@ public class UdiseAddStudent {
                             enrolmentProfileUpdate(wait, record, driver,userid);
                             facilityProfileUpdate(wait, record, driver,userid);
                             confirmProfileUpdate(wait,record,driver,userid);
+                            updateCredit(jobId);
                         }
+
                     }
                 }catch (Throwable e){
                     try{
                         List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//button[contains(@style, 'display: inline-block')]")));
-                        System.out.println(buttons);
                         buttons.get(0).click();
-                    }catch ( Exception ex){
-                        log.error("btn not clicked or not found");
-                    }
+                        log.error("Some fields are missing");
+                    }catch ( Exception ex){}
                     log.info("error while doing operation in student :{}",record.getStudentName());
                     errorLogManager.logError(record,e, "Context info about this error", "ERROR", this.getClass().getName(), "fillPersonalDetails");
                     try{
@@ -286,7 +308,8 @@ public class UdiseAddStudent {
                     if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED ) continue;
                     record.setJobStatus(JobStatus.PENDING);
                     jobRecordDao.update(record);
-                    e.printStackTrace();
+                    isJobComplete=false;
+                    log.error(e.getMessage());
                 }
             }
         }catch (Exception exception){
@@ -719,4 +742,13 @@ public class UdiseAddStudent {
         viewAndManageBtn.click();
     }
 
+    private void updateCredit(Long jobId){
+        Job job=jobDao.getById(Job.class,jobId);
+        job.incrementCredit();
+        jobDao.update(job);
+        job.getAppUser().incrementCredit();
+        appUserDao.update(job.getAppUser());
+        job.getAppUser().getClient().decrementCredit();
+        clientDao.update(job.getAppUser().getClient());
+    }
 }

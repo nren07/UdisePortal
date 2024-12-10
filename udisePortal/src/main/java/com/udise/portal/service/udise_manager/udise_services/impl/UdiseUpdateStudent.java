@@ -1,10 +1,9 @@
-package com.udise.portal.service.udise_manager.impl;
+package com.udise.portal.service.udise_manager.udise_services.impl;
 
 import com.udise.portal.dao.AppUserDao;
 import com.udise.portal.dao.ClientDao;
 import com.udise.portal.dao.JobDao;
 import com.udise.portal.dao.JobRecordDao;
-import com.udise.portal.entity.Client;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.Category;
@@ -165,6 +164,7 @@ public class UdiseUpdateStudent {
                     job.setJobStatus(JobStatus.COMPLETED);
                     jobDao.update(job);
                 }
+                else job.setJobStatus(JobStatus.PENDING);
                 messagingTemplate.convertAndSend("/topic/"+userid, new SocketResponseVo("JOB_ENDED", "job Ended testing"));
                 dockerManager.stopAndRemoveContainer(containerId,dockerVo);
             }

@@ -6,7 +6,7 @@ import com.udise.portal.entity.Job;
 import com.udise.portal.service.docker_manager.DockerManager;
 import com.udise.portal.service.job_manager.JobManager;
 import com.udise.portal.service.job_record_manager.JobRecordManager;
-import com.udise.portal.service.udise_manager.UdiseManager;
+import com.udise.portal.service.udise_manager.udise_manager.UdiseManager;
 import com.udise.portal.vo.job.*;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

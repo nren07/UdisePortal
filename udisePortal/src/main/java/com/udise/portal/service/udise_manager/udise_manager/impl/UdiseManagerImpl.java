@@ -1,15 +1,14 @@
-package com.udise.portal.service.udise_manager.impl;
+package com.udise.portal.service.udise_manager.udise_manager.impl;
 
-import com.udise.portal.dao.AppUserDao;
-import com.udise.portal.dao.ClientDao;
-import com.udise.portal.entity.AppUser;
-import com.udise.portal.entity.Client;
 import com.udise.portal.entity.Job;
 import com.udise.portal.entity.JobRecord;
 import com.udise.portal.enums.JobType;
 import com.udise.portal.service.docker_manager.DockerManager;
 import com.udise.portal.service.job_record_manager.JobRecordManager;
-import com.udise.portal.service.udise_manager.UdiseManager;
+import com.udise.portal.service.udise_manager.udise_services.impl.ProgressionActivity;
+import com.udise.portal.service.udise_manager.udise_services.impl.UdiseAddStudent;
+import com.udise.portal.service.udise_manager.udise_services.impl.UdiseUpdateStudent;
+import com.udise.portal.service.udise_manager.udise_manager.UdiseManager;
 import com.udise.portal.vo.docker.DockerVo;
 import com.udise.portal.vo.job.JobStartResponseVo;
 import org.apache.logging.log4j.LogManager;
@@ -82,9 +81,5 @@ public class UdiseManagerImpl implements UdiseManager {
             return new JobStartResponseVo(null,"Record Not Found");
         }
 
-    }
-
-    public boolean isCreditAvailable(Job job){
-        long client=job.getAppUser().getClient().getCreditPoint();
     }
 }
