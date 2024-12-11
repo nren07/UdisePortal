@@ -1,4 +1,4 @@
-package com.udise.portal.service.udise_manager.udise_services.impl;
+package com.udise.portal.service.udise_manager.udise_services;
 
 import com.udise.portal.dao.AppUserDao;
 import com.udise.portal.dao.ClientDao;
@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class UdiseUpdateStudent {
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final Logger log = LogManager.getLogger(ProgressionActivity.class);
+    private static final Logger log = LogManager.getLogger(UdiseUpdateStudent.class);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Adjust the pattern as needed
     DecimalFormat df=new DecimalFormat("0.##########");
     @Autowired
@@ -270,6 +270,7 @@ public class UdiseUpdateStudent {
                     List<WebElement> buttons = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//button[contains(@style, 'display: inline-block')]")));
                     System.out.println(buttons);
                     buttons.get(0).click();
+
                     log.info("ok button not found");
                 }catch (Exception exception){
                     log.error("ok button not found");

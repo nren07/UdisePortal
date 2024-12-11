@@ -1,4 +1,4 @@
-package com.udise.portal.service.udise_manager.udise_services.impl;
+package com.udise.portal.service.udise_manager.udise_services;
 
 import com.udise.portal.dao.JobRecordDao;
 import com.udise.portal.entity.Job;

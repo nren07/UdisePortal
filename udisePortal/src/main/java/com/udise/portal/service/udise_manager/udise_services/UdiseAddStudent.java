@@ -1,4 +1,4 @@
-package com.udise.portal.service.udise_manager.udise_services.impl;
+package com.udise.portal.service.udise_manager.udise_services;
 import com.udise.portal.dao.AppUserDao;
 import com.udise.portal.dao.ClientDao;
 import com.udise.portal.dao.JobDao;
@@ -84,7 +84,7 @@ public class UdiseAddStudent {
         int loginTimeOut=vncLoginTimeOut;
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         WebDriver driver = null; // Declare driver her
-        Boolean isJobCompleted=true;
+        boolean isJobCompleted=true;
         job.setJobStatus(JobStatus.IN_PROGRESS);
         log.info("Job Start");
         String userid=String.valueOf(job.getAppUser().getId());
@@ -170,7 +170,7 @@ public class UdiseAddStudent {
             viewManageButton.click();
 
             // Proceed with adding a student
-            addStudent(wait,driver,jobId,userid,isJobCompleted);
+            isJobCompleted=addStudent(wait,driver,jobId,userid);
         } catch (MalformedURLException e) {
             log.error("Invalid hub URL: ", e);
         } catch (WebDriverException e) {
@@ -191,7 +191,8 @@ public class UdiseAddStudent {
         }
     }
 
-    public void addStudent(WebDriverWait wait,WebDriver driver,Long jobId,String userid,Boolean isJobComplete) throws Exception {
+    public boolean addStudent(WebDriverWait wait,WebDriver driver,Long jobId,String userid) throws Exception {
+        boolean isJobComplete=true;
         try{
             List<JobRecord> records = jobRecordManager.getJobRecord(jobId);
             ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
@@ -305,7 +306,8 @@ public class UdiseAddStudent {
                     }catch (Exception ex){
                         log.error("navigation code error in main try catch block");
                     }
-                    if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED ) continue;
+                    if(record.getJobStatus()==JobStatus.COMPLETED || record.getJobStatus()==JobStatus.ALREADY_COMPLETED )
+                    {continue;}
                     record.setJobStatus(JobStatus.PENDING);
                     jobRecordDao.update(record);
                     isJobComplete=false;
@@ -315,6 +317,7 @@ public class UdiseAddStudent {
         }catch (Exception exception){
             exception.printStackTrace();
         }
+        return isJobComplete;
     }
 
     private void fillPersonalDetails(WebDriverWait wait,JobRecord record, WebDriver driver,String userid) throws Throwable {
