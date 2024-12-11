@@ -107,9 +107,6 @@ public class DockerManagerImpl implements DockerManager {
         }
     }
 
-
-
-
     @Override
     public void stopAndRemoveContainer(String containerId,DockerVo obj) {
         try{

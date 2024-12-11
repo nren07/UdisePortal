@@ -19,7 +19,7 @@ public class FileController {
     @PostMapping("/{userId}/upload")
     public ResponseEntity<JobResVo> uploadFile(
             @PathVariable Long userId,
-            @ModelAttribute FileReqVo requestVo) {
+            @ModelAttribute FileReqVo requestVo) throws Exception {
 
 
         JobResVo response = fileManager.fileHandler(requestVo, userId);

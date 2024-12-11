@@ -18,7 +18,7 @@ public class JobRecordController {
 
     @RequestMapping(value = "/{jobId}/get_job_records", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<JobRecordResponseVo>> getJobRecords(@PathVariable Long jobId) {
+    public ResponseEntity<List<JobRecordResponseVo>> getJobRecords(@PathVariable Long jobId) throws Exception {
         List<JobRecordResponseVo> res=jobRecordManager.getJobRecords(jobId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }

@@ -20,7 +20,7 @@ public class LoginController {
 
     @RequestMapping(value = "/client", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ClientLoginResVo> clientLogin(@RequestBody ClientLoginReqVo obj) {
+    public ResponseEntity<ClientLoginResVo> clientLogin(@RequestBody ClientLoginReqVo obj) throws Exception {
         ClientLoginResVo res=loginManager.clientLogin(obj);
         System.out.println(res);
         return new ResponseEntity<>(res, HttpStatus.OK);
@@ -28,7 +28,7 @@ public class LoginController {
 
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<UserLoginResVo> userLogin(@RequestBody UserLoginReqVo obj) {
+    public ResponseEntity<UserLoginResVo> userLogin(@RequestBody UserLoginReqVo obj) throws Exception{
         System.out.println("login request received");
         UserLoginResVo res=loginManager.userLogin(obj);
         System.out.println(res);
@@ -36,7 +36,7 @@ public class LoginController {
     }
     @RequestMapping(value = "/admin", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<SuperLoginResVo> adminLogin(@RequestBody UserLoginReqVo obj) {
+    public ResponseEntity<SuperLoginResVo> adminLogin(@RequestBody UserLoginReqVo obj) throws Exception {
         System.out.println("login request received");
         SuperLoginResVo res=loginManager.superLogin(obj);
         System.out.println(res);

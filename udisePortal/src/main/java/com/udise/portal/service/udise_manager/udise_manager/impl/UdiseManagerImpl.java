@@ -49,17 +49,17 @@ public class UdiseManagerImpl implements UdiseManager {
     }
 
     @Override
-    public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException {
+    public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException,RuntimeException {
         log.info("startJob Function start");
-        if(liveJobs.containsKey(jobId)) return new JobStartResponseVo(null,"Job Already in Progress");
+        if(liveJobs.containsKey(jobId)) throw new RuntimeException("Job Already in progress");
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
         long remainingCredit=job.getAppUser().getClient().getCreditPoint();
-        if(remainingCredit<jobRecordList.size()) return new JobStartResponseVo(null,"sufficient credit points is not available");
+        if(remainingCredit<jobRecordList.size()) throw new RuntimeException("Sufficient credit point not available");
         if(jobRecordList.size()>0){
 
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
             if(dockerVo==null){
-                return new JobStartResponseVo(null,"internal server error");
+                throw new RuntimeException("Internal Server Error");
             }
             String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
             log.info("wait for docker ready");
@@ -81,7 +81,7 @@ public class UdiseManagerImpl implements UdiseManager {
             });
             return new JobStartResponseVo(dockerVo.getVncPort(),"Job Started");
         }else{
-            return new JobStartResponseVo(null,"Record Not Found");
+            throw new RuntimeException("Record not found");
         }
 
     }

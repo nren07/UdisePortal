@@ -22,18 +22,14 @@ public class JobController {
 
 
     @RequestMapping(value = "/{userId}/getJobs", method = RequestMethod.GET)
-    public ResponseEntity<List<JobResVo>> getJobs(@PathVariable Long userId) {
+    public ResponseEntity<List<JobResVo>> getJobs(@PathVariable Long userId) throws Exception {
         List<JobResVo> res=jobManager.getJobs(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{jobId}/start", method = RequestMethod.GET)
-    public ResponseEntity<JobStartResponseVo> startJob(@PathVariable Long jobId) throws IOException, InterruptedException {
-        try{
-            JobStartResponseVo res = jobManager.startJob(jobId);
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<JobStartResponseVo> startJob(@PathVariable Long jobId) throws IOException, InterruptedException,RuntimeException {
+        JobStartResponseVo res = jobManager.startJob(jobId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

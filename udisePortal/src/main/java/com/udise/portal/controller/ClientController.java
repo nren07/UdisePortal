@@ -18,7 +18,7 @@ public class ClientController {
 
     @RequestMapping(value = "/addCredit", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> clientLogin(@RequestBody CreditUpdateReqVo obj) {
+    public ResponseEntity<String> clientLogin(@RequestBody CreditUpdateReqVo obj) throws Exception {
         clientManager.addCredit(obj);
         return new ResponseEntity<>("Credit Points Added", HttpStatus.OK);
     }

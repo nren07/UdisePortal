@@ -21,15 +21,11 @@ public class SuperAdminController {
 
     @RequestMapping(value = "/{id}/addCredit", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> clientLogin(@PathVariable UUID id, @RequestHeader("Authorization") String token, @RequestBody CreditUpdateReqVo obj) {
+    public ResponseEntity<String> addCredit(@PathVariable UUID id, @RequestHeader("Authorization") String token, @RequestBody CreditUpdateReqVo obj) throws Exception {
         System.out.println(token);
         if (!isValidToken(token,id)) {
             return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
         }
-
-        System.out.println("Validated Token: " + token);
-        System.out.println("Received Object: " + obj);
-
         superAdminManager.addCredit(obj);
         return new ResponseEntity<>("Credit Points Added", HttpStatus.OK);
     }

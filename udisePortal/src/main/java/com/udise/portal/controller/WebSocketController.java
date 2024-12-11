@@ -17,15 +17,7 @@ public class WebSocketController {
 
     @PostMapping("/emit")
     public void sendEvent() {
-        System.out.println("emit event triggered");
-            // Send message to the specific user
-//        messagingTemplate.convertAndSendToUser(
-//                "nren", "/queue/messages", new JobEvent("JOB_STARTED", 1L)
-//        );
-
         messagingTemplate.convertAndSend("/topic/1", new SocketResponseVo("JOB_STARTED", "job started testing"));
-
-
     }
 }
 

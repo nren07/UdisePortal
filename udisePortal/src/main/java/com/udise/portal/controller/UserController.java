@@ -25,16 +25,8 @@ public class UserController  {
     @Autowired
     private AppUserDao appUserDao;
 
-//    @RequestMapping(method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<ListResponse<AppUserGetAllVo>> getAll(HttpServletRequest request) {
-//        SearchCriteria searchCriteria = WebUtils.getSearchCriteria(request);
-//        ListResponse<AppUserGetAllVo> result = appUserManager.getAll(searchCriteria);
-//        return new ResponseEntity<>(result, getHeaders(), HttpStatus.OK);
-//    }
-
     @RequestMapping(value = "/{clientId}/getUsers", method = RequestMethod.GET)
-    public ResponseEntity<List<UserResVo>> getUsers(@PathVariable Long clientId) {
+    public ResponseEntity<List<UserResVo>> getUsers(@PathVariable Long clientId) throws Exception {
         List<UserResVo> res= appUserManager.getUsers(clientId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
