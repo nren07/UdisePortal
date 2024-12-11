@@ -25,7 +25,7 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
     @Override
     public AppUser findByEmail(String email) {
         try{
-            TypedQuery<AppUser> query = getEm().createQuery(
+            TypedQuery<AppUser> query = getCurrentSession().createQuery(
                     "SELECT u FROM AppUser u WHERE u.email = :email", AppUser.class);
             query.setParameter("email", email);
             return query.getSingleResult();
@@ -38,7 +38,7 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
     @Override
     public AppUser findByUserName(String userName) {
         try{
-            TypedQuery<AppUser> query = getEm().createQuery(
+            TypedQuery<AppUser> query = getCurrentSession().createQuery(
                     "SELECT u FROM AppUser u WHERE u.username = :username", AppUser.class);
             query.setParameter("username", userName);
             return query.getSingleResult();
@@ -50,7 +50,7 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
 
     @Override
     public AppUser getById(Long id) {
-        return getEm().find(AppUser.class, id);
+        return getCurrentSession().find(AppUser.class, id);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
     @Override
     public List<AppUser> findByRoleId(Long roleId) {
         try{
-            TypedQuery<AppUser> query = getEm().createQuery(
+            TypedQuery<AppUser> query = getCurrentSession().createQuery(
                     "SELECT u FROM AppUser u WHERE u.role.id = :roleId", AppUser.class);
             query.setParameter("roleId", roleId);
             return query.getResultList();
@@ -75,7 +75,7 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
     @Override
     public AppUser getUserByUserName(String email) {
         try{
-            TypedQuery<AppUser> query = getEm().createQuery(
+            TypedQuery<AppUser> query = getCurrentSession().createQuery(
                     "SELECT u FROM AppUser u WHERE u.email = :email", AppUser.class);
             query.setParameter("email", email);
             return query.getSingleResult();
@@ -87,14 +87,14 @@ public class AppUserDaoImpl extends AbstractDaoImpl implements AppUserDao {
 
     @Override
     public List<AppUser> getUserList(Long clientId) {
-        TypedQuery<AppUser> query = getEm().createQuery(
+        TypedQuery<AppUser> query = getCurrentSession().createQuery(
                 "SELECT u FROM AppUser u WHERE u.client.id = :clientId", AppUser.class);
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }
 
     public List<AppUser> findByRole(String role) {
-        TypedQuery<AppUser> query = getEm().createQuery(
+        TypedQuery<AppUser> query = getCurrentSession().createQuery(
                 "SELECT u FROM AppUser u WHERE u.role = :role", AppUser.class);
         query.setParameter("role", role);
         return query.getResultList();

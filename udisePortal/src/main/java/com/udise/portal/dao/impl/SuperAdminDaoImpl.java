@@ -20,7 +20,7 @@ public class SuperAdminDaoImpl extends AbstractDaoImpl implements SuperAdminDao 
     @Transactional
     public SuperAdmin findByEmail(String username) {
         try{
-            TypedQuery<SuperAdmin> query = getEm().createQuery(
+            TypedQuery<SuperAdmin> query = getCurrentSession().createQuery(
                     "SELECT u FROM SuperAdmin u WHERE u.username = :username", SuperAdmin.class);
             query.setParameter("username", username);
             return query.getSingleResult();

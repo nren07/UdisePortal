@@ -16,7 +16,7 @@ public class JobDaoImpl extends AbstractDaoImpl implements JobDao {
     @Override
     public List<Job> getJobs(Long userId) {
         try{
-            TypedQuery<Job> query = getEm().createQuery(
+            TypedQuery<Job> query = getCurrentSession().createQuery(
                     "SELECT j FROM Job j WHERE j.appUser.id = :userId", Job.class);
             query.setParameter("userId", userId);
             return query.getResultList();

@@ -16,7 +16,7 @@ public class JobRecordDaoImpl extends AbstractDaoImpl implements JobRecordDao {
     @Override
     public List<JobRecord> getAllJobRecords(Long id) {
         try {
-            TypedQuery<JobRecord> query = getEm().createQuery(
+            TypedQuery<JobRecord> query = getCurrentSession().createQuery(
                     "SELECT r FROM JobRecord r WHERE r.job.id = :id", JobRecord.class);
             query.setParameter("id", id);
             return query.getResultList();
@@ -36,7 +36,7 @@ public class JobRecordDaoImpl extends AbstractDaoImpl implements JobRecordDao {
                     "AND LOWER(r.section) = LOWER(:section) " +
                     "AND r.jobStatus = :jobStatus";
 
-            TypedQuery<JobRecord> query = getEm().createQuery(query2, JobRecord.class);
+            TypedQuery<JobRecord> query = getCurrentSession().createQuery(query2, JobRecord.class);
 
             // Logging parameters for better debugging
             log.info("id: {}, className: {}, section: {}, jobStatus: {}", id, className, section, JobStatus.PENDING);

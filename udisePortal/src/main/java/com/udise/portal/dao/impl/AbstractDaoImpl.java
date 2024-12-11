@@ -31,10 +31,6 @@ public class AbstractDaoImpl implements AbstractDao {
 	@PersistenceContext
 	private EntityManager em;
 
-	public EntityManager getEm() {
-		return this.em;
-	}
-
 	protected static final String DOT = ".";
 
 	@Autowired

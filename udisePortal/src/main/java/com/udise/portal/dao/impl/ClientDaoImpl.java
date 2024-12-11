@@ -25,7 +25,7 @@ public class ClientDaoImpl extends AbstractDaoImpl implements ClientDao {
     @Override
     public Client findByEmail(String email) {
         try{
-            TypedQuery<Client> query = getEm().createQuery(
+            TypedQuery<Client> query = getCurrentSession().createQuery(
                     "SELECT u FROM Client u WHERE u.email = :email", Client.class);
             query.setParameter("email", email);
             return query.getSingleResult();
@@ -63,6 +63,6 @@ public class ClientDaoImpl extends AbstractDaoImpl implements ClientDao {
 
     @Override
     public Client getById(Long id) {
-        return getEm().find(Client.class, id);
+        return getCurrentSession().find(Client.class, id);
     }
 }

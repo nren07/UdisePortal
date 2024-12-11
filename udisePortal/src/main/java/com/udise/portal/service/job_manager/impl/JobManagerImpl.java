@@ -24,7 +24,6 @@ import java.util.List;
 
 @Service
 @Transactional
-@Slf4j
 public class JobManagerImpl implements JobManager {
 
     private static final Logger log = LogManager.getLogger(JobManagerImpl.class);

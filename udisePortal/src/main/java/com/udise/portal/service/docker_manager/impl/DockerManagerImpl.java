@@ -19,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-@Slf4j
 @Component
 public class DockerManagerImpl implements DockerManager {
 

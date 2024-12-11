@@ -143,7 +143,7 @@ public class AppUser {
         return usedCredit;
     }
 
-    public void setUsedCredit(Long usedCredit) {
+    public void setUsedCredit(long usedCredit) {
         this.usedCredit = usedCredit;
     }
 
