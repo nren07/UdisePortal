@@ -69,10 +69,13 @@ public class UdiseManagerImpl implements UdiseManager {
                 try {
                     liveJobs.put(jobId,true);
                     if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
+                        log.info("job start in progression");
                         progressionActivity.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
+                        log.info("job start in update student");
                         udiseUpdateStudent.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else{
+                        log.info("job start in add student");
                         udiseAddStudent.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }
                 } catch (InterruptedException | IOException e) {

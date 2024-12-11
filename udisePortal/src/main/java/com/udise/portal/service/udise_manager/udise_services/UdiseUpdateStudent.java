@@ -86,7 +86,7 @@ public class UdiseUpdateStudent {
             WebDriver driver = null; // Declare driver her
 
             boolean isJobCompleted=true;
-            log.info("Job Start");
+            log.info(" Update Job Start");
             String userid=String.valueOf(job.getAppUser().getId());
             try {
                 // Set Chrome options and capabilities
@@ -223,7 +223,6 @@ public class UdiseUpdateStudent {
                 System.out.println(name.getText());
                 System.out.println(record.getStudentName());
                 System.out.println(dob.getText());
-                //System.out.println(dateFormat.format(record.getDob()));
 
                 if (!name.getText().equalsIgnoreCase(record.getStudentName())) continue;
                 if(actionBtn.getText().contains("Completed")){
