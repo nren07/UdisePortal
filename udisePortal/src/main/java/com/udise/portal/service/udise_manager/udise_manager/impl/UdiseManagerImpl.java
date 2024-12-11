@@ -50,6 +50,7 @@ public class UdiseManagerImpl implements UdiseManager {
 
     @Override
     public JobStartResponseVo startJob(Long jobId, Job job) throws IOException, InterruptedException {
+        log.info("startJob Function start");
         if(liveJobs.containsKey(jobId)) return new JobStartResponseVo(null,"Job Already in Progress");
         List<JobRecord> jobRecordList=jobRecordManager.getJobRecord(jobId);
         long remainingCredit=job.getAppUser().getClient().getCreditPoint();
@@ -61,6 +62,7 @@ public class UdiseManagerImpl implements UdiseManager {
                 return new JobStartResponseVo(null,"internal server error");
             }
             String checkDockerStatus = String.format("http://%s:%d/", dockerVo.getContainerName(), 4444); //for prod
+            log.info("wait for docker ready");
             dockerManager.waitForContainerReady(checkDockerStatus,dockerVo.getContainerId(),dockerVo); // for prod
             //            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
             taskExecutor.execute(() -> {

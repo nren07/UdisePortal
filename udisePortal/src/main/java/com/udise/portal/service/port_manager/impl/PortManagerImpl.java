@@ -13,19 +13,20 @@ public class PortManagerImpl implements PortManager {
         this.portAllocator = portAllocator;
     }
 
-    public void allocatePorts() {
+    public void allocateVNCport() {
         // Dynamically allocate free ports on the host
         for (Integer port : portAllocator.getPortMap().keySet()) {
             if (Boolean.FALSE.equals(portAllocator.getPortMap().get(port)) && portAllocator.isPortAvailable(port)) {
-                seleniumHostPort = port;
+                vncHostPort = port;
                 portAllocator.allocatePort(port);
                 break;
             }
         }
-
+    }
+    public void allocateSeleniumPort(){
         for (Integer port : portAllocator.getPortMap().keySet()) {
             if (Boolean.FALSE.equals(portAllocator.getPortMap().get(port)) && portAllocator.isPortAvailable(port)) {
-                vncHostPort = port;
+                seleniumHostPort = port;
                 portAllocator.allocatePort(port);
                 break;
             }
@@ -37,12 +38,12 @@ public class PortManagerImpl implements PortManager {
     }
 
     public int getSeleniumHostPort() {
-        allocatePorts();
+        allocateSeleniumPort();
         return seleniumHostPort;
     }
 
     public int getVncHostPort() {
-        allocatePorts();
+        allocateVNCport();
         return vncHostPort;
     }
 }
