@@ -84,8 +84,7 @@ public class UdiseUpdateStudent {
 //        String url = String.format("http://localhost:%d/wd/hub",  dockerVo.getHostPort()); //for dev
         try{
             WebDriver driver = null; // Declare driver her
-            job.setJobStatus(JobStatus.IN_PROGRESS);
-            jobDao.update(job);
+
             boolean isJobCompleted=true;
             log.info("Job Start");
             String userid=String.valueOf(job.getAppUser().getId());
@@ -95,6 +94,8 @@ public class UdiseUpdateStudent {
                 DesiredCapabilities capabilities = new DesiredCapabilities();
                 capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
                 driver = new RemoteWebDriver(new URL(url), capabilities);
+                job.setJobStatus(JobStatus.IN_PROGRESS);
+                jobDao.update(job);
 
 //                driver=new ChromeDriver();
                 log.info("Chrome Start");

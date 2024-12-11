@@ -56,7 +56,7 @@ public class UdiseManagerImpl implements UdiseManager {
         long remainingCredit=job.getAppUser().getClient().getCreditPoint();
         if(remainingCredit<jobRecordList.size()) return new JobStartResponseVo(null,"sufficient credit points is not available");
         if(jobRecordList.size()>0){
-            liveJobs.put(jobId,true);
+
             DockerVo dockerVo=dockerManager.createAndStartContainer(jobId);
             if(dockerVo==null){
                 return new JobStartResponseVo(null,"internal server error");
@@ -67,6 +67,7 @@ public class UdiseManagerImpl implements UdiseManager {
             //            String checkDockerStatus = String.format("http://localhost:%d/", dockerVo.getHostPort()); //for dev
             taskExecutor.execute(() -> {
                 try {
+                    liveJobs.put(jobId,true);
                     if(job.getJobType()== JobType.PROGRESSION_ACTIVITY){
                         progressionActivity.startChromeService(dockerVo, dockerVo.getContainerId(), jobRecordList,job,liveJobs);
                     }else if(job.getJobType()== JobType.UPDATE_STUDENTS){
